@@ -1,0 +1,53 @@
+/* Пример для 8 Марта */
+.theme-march8 .timer__item {
+    background: linear-gradient(45deg, #ff0080, #ff8c00, #ff0080); /* Розовый неон */
+    filter: drop-shadow(0 0 10px rgba(255, 0, 128, 0.6));
+}
+
+.theme-march8 .timer__divider {
+    background: linear-gradient(to bottom, #ff0080, #ff8c00, #ff0080);
+}
+
+/* ИСПРАВЛЕННЫЙ СТИЛЬ ДЛЯ ВАЛЕНТИНКИ (14 ФЕВРАЛЯ) */
+.theme-valentines .placeholder__text,
+.theme-valentines .timer__item {
+    background: linear-gradient(90deg, #4d0000, #ff0000, #ff7b00, #4d0000);
+    background-size: 200% 100%; /* 200% достаточно для закольцовки */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    /* МАГИЯ ТУТ: linear делает движение ровным, без "рывков" и "откатов" */
+    animation: gradient-move 15s linear infinite; 
+    
+    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.3));
+}
+@keyframes gradient-move {
+    0% {
+        background-position: -300% 50%;
+    }
+    100% {
+        background-position: 300% 50%; /* Прогоняем ленту дальше */
+    }
+}
+
+/* На всякий случай добавим мягкое красное свечение */
+.theme-valentines .placeholder__text {
+    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.4)) !important;
+}
+
+.heart {
+    position: fixed;
+    top: -20px;
+    font-size: 20px;
+    color: #ff0000;
+    user-select: none;
+    pointer-events: none;
+    z-index: 9999;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(105vh) rotate(360deg);
+    }
+}
