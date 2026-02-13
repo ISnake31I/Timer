@@ -1,0 +1,52 @@
+.timer__placeholder {
+    /* 1. АБСОЛЮТНЫЙ ЦЕНТР ЭКРАНА */
+    display: none; /* Контролируется JS */
+    position: fixed; /* Вырываем из потока, чтобы не зависел от таймера */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Мертвая точка: центр-центр */
+    
+    /* 2. ГЕОМЕТРИЯ БЛОКА */
+    width: 90%;
+    max-width: 800px; /* Чтобы текст не размазало на 1720px */
+    padding: 40px 20px;
+    box-sizing: border-box;
+    z-index: 9999;
+
+    /* 3. ВИЗУАЛ (твой стиль) */
+    border: 1px solid rgba(255, 0, 0, 0.2); 
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    text-align: center;
+}
+
+.placeholder__text {
+    /* Убрал display: flex, он ломает градиент на буквах */
+    font-family: 'Roboto', sans-serif;
+    font-size: 2.5rem; /* На десктопе побольше */
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0;
+    
+    background: linear-gradient(45deg, #ff0000, #ff7b00, #ff0000);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-move 7s ease infinite;
+}
+
+/* АДАПТИВ ДЛЯ НАДПИСИ */
+@media screen and (max-width: 768px) {
+    .placeholder__text {
+        font-size: 1.5rem; /* Уменьшаем на планшетах */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .placeholder__text {
+        font-size: 1.2rem; /* Уменьшаем на телефонах */
+    }
+    .timer__placeholder {
+        padding: 20px 10px;
+    }
+}
