@@ -1,8 +1,0 @@
-@font-face {
-    font-family: 'Digital_7'; /* Пиши через дефис, как в оригинале */
-    src: local('Digital_7'), 
-         url('../fonts/digital_7.ttf') format('truetype'); /* ТУТ ИСПРАВИЛ */
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
