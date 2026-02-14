@@ -1,7 +1,7 @@
 // logic-lock-time.js
 
 // 1. СРАЗУ создаем флаг, не дожидаясь загрузки всей страницы
-const unlockDate = new Date("2025-01-20T00:00:00"); // Дата 5-го конверта
+const unlockDate = new Date("2026-05-20T00:00:00"); // Дата 5-го конверта
 const now = new Date();
 window.isTimerBlocked = (now < unlockDate);
 
@@ -19,4 +19,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 });
+
 
