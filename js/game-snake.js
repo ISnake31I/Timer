@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             overlay.style.transformOrigin = `${centerX}px ${centerY}px`;
             overlay.style.display = 'flex';
-            
+
             setTimeout(() => {
                 overlay.classList.add('active');
                 initGame();
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeBtn.addEventListener('click', () => {
             // Сначала запускаем анимацию уменьшения
             overlay.classList.remove('active');
-            
+
             // Ждем 500мс (время анимации в CSS) и только потом гасим блок полностью
             setTimeout(() => {
                 if (!overlay.classList.contains('active')) {
@@ -104,10 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let xDiff = e.changedTouches[0].screenX - touchstartX;
         let yDiff = e.changedTouches[0].screenY - touchstartY;
-        const threshold = 15; // Чувствительность
+
+        // ПОРОГ ЧУВСТВИТЕЛЬНОСТИ (20-30 - золотая середина)
+        const threshold = 25;
 
         if (Math.abs(xDiff) > threshold || Math.abs(yDiff) > threshold) {
             let swipeMove = null;
+
+            // Определяем доминирующее направление (что сильнее: влево/вправо или вверх/вниз)
             if (Math.abs(xDiff) > Math.abs(yDiff)) {
                 swipeMove = xDiff > 0 ? "RIGHT" : "LEFT";
             } else {
@@ -116,24 +120,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (swipeMove) {
                 const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : d;
-                
-                // Если направление валидное (не 180 градусов)
+
+                // Проверка на 180 градусов (чтобы не самоубиться)
                 if ((swipeMove == "LEFT" && lastDir != "RIGHT" && lastDir != "LEFT") ||
                     (swipeMove == "UP" && lastDir != "DOWN" && lastDir != "UP") ||
                     (swipeMove == "RIGHT" && lastDir != "LEFT" && lastDir != "RIGHT") ||
                     (swipeMove == "DOWN" && lastDir != "UP" && lastDir != "DOWN")) {
-                    
-                    inputQueue.push(swipeMove);
 
-                    // --- МАГИЯ Г-ОБРАЗНОГО СВАЙПА ---
-                    // Обнуляем точку старта на ТЕКУЩУЮ позицию пальца, 
-                    // чтобы следующий изгиб "Г" считался от этой точки
+                    inputQueue.push(swipeMove); // КЛАДЕМ В ТВОЮ ОЧЕРЕДЬ
+
+                    // МАГИЯ Г-ОБРАЗНОГО СВАЙПА: сбрасываем точку старта на текущую
                     touchstartX = e.changedTouches[0].screenX;
                     touchstartY = e.changedTouches[0].screenY;
                 }
             }
         }
-        e.preventDefault(); // Жесткая блокировка скролла Safari
+        // УБИВАЕМ ДЕРГАНЬЕ ЭКРАНА SAFARI
+        if (e.cancelable) e.preventDefault();
     }, { passive: false });
 
     function collision(head, array) {
@@ -143,18 +146,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function draw() {
         if (inputQueue.length > 0) d = inputQueue.shift();
-        
+
         ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         for (let i = 0; i < snake.length; i++) {
             if (i === 0) {
-                ctx.fillStyle = "#660000"; 
+                ctx.fillStyle = "#660000";
                 ctx.shadowBlur = 5;
                 ctx.shadowColor = "#ff0000";
             } else {
                 let ratio = i / snake.length;
-                let r = Math.floor(100 - (ratio * 60)); 
+                let r = Math.floor(100 - (ratio * 60));
                 ctx.fillStyle = `rgb(${r}, 0, 0)`;
                 ctx.shadowBlur = 0;
             }
@@ -164,11 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.strokeRect(Math.round(snake[i].x), Math.round(snake[i].y), box, box);
         }
 
-        ctx.fillStyle = "#4B0082"; 
+        ctx.fillStyle = "#4B0082";
         ctx.fillRect(Math.round(food.x), Math.round(food.y), box, box);
 
         if (!d) return;
-        
+
         let snakeX = snake[0].x;
         let snakeY = snake[0].y;
 
