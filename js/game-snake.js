@@ -101,19 +101,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     canvas.addEventListener('touchmove', e => {
         if (!touchstartX || !touchstartY) return;
+
         let xDiff = e.changedTouches[0].screenX - touchstartX;
         let yDiff = e.changedTouches[0].screenY - touchstartY;
+        const threshold = 15; // Чувствительность
 
         if (Math.abs(xDiff) > threshold || Math.abs(yDiff) > threshold) {
-            let swipeMove = Math.abs(xDiff) > Math.abs(yDiff) ? (xDiff > 0 ? "RIGHT" : "LEFT") : (yDiff > 0 ? "DOWN" : "UP");
-            const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : d;
-            if (swipeMove == "LEFT" && lastDir != "RIGHT" && lastDir != "LEFT") inputQueue.push(swipeMove);
-            else if (swipeMove == "UP" && lastDir != "DOWN" && lastDir != "UP") inputQueue.push(swipeMove);
-            else if (swipeMove == "RIGHT" && lastDir != "LEFT" && lastDir != "RIGHT") inputQueue.push(swipeMove);
-            else if (swipeMove == "DOWN" && lastDir != "UP" && lastDir != "DOWN") inputQueue.push(swipeMove);
-            touchstartX = 0; touchstartY = 0;
+            let swipeMove = null;
+            if (Math.abs(xDiff) > Math.abs(yDiff)) {
+                swipeMove = xDiff > 0 ? "RIGHT" : "LEFT";
+            } else {
+                swipeMove = yDiff > 0 ? "DOWN" : "UP";
+            }
+
+            if (swipeMove) {
+                const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : d;
+                
+                // Если направление валидное (не 180 градусов)
+                if ((swipeMove == "LEFT" && lastDir != "RIGHT" && lastDir != "LEFT") ||
+                    (swipeMove == "UP" && lastDir != "DOWN" && lastDir != "UP") ||
+                    (swipeMove == "RIGHT" && lastDir != "LEFT" && lastDir != "RIGHT") ||
+                    (swipeMove == "DOWN" && lastDir != "UP" && lastDir != "DOWN")) {
+                    
+                    inputQueue.push(swipeMove);
+
+                    // --- МАГИЯ Г-ОБРАЗНОГО СВАЙПА ---
+                    // Обнуляем точку старта на ТЕКУЩУЮ позицию пальца, 
+                    // чтобы следующий изгиб "Г" считался от этой точки
+                    touchstartX = e.changedTouches[0].screenX;
+                    touchstartY = e.changedTouches[0].screenY;
+                }
+            }
         }
-    }, { passive: true });
+        e.preventDefault(); // Жесткая блокировка скролла Safari
+    }, { passive: false });
 
     function collision(head, array) {
         for (let i = 0; i < array.length; i++) if (head.x == array[i].x && head.y == array[i].y) return true;
