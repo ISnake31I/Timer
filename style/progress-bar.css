@@ -1,0 +1,34 @@
+.system-loading {
+    margin: 25px auto 0; /* auto по бокам выровняет контейнер по центру */
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрует содержимое (текст) внутри */
+    justify-content: center; /* Центрует по вертикали, если нужно */
+}
+
+.progress-wrapper {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.progress-line {
+    width: 0%; /* Будет меняться через JS */
+    height: 100%;
+    background: linear-gradient(90deg, #ff0000, #ff7b00);
+    box-shadow: 0 0 15px #ff4500;
+    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.status-text {
+    margin-top: 12px;
+    font-family: 'Courier New', monospace; /* Технический вайб */
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}

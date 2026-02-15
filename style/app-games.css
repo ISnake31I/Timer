@@ -1,0 +1,121 @@
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 50px;
+    /* Отступ от таймера */
+    width: 90%;
+    max-width: 400px;
+}
+
+.app-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.app-item:active {
+    transform: scale(0.9);
+    /* Эффект нажатия как на айфоне */
+}
+
+.app-icon {
+    width: 65px;
+    height: 65px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #4B0082, #800000);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.app-item span {
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 300;
+}
+
+.app-item.hidden-app {
+    display: none !important;
+    /* Полностью скрываем до даты */
+}
+
+.app-item.locked-app {
+    opacity: 0.3;
+    filter: grayscale(1);
+    pointer-events: none;
+    /* Нельзя нажать */
+}
+
+/* =================================== */
+.game-overlay {
+    display: none;
+    /* Контролируется через JS */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95) !important;
+    /* Затемняем всё сзади */
+    z-index: 100000;
+    /* ВЫШЕ ЧЕМ ВСЁ, кроме защиты */
+    align-items: center;
+    justify-content: center;
+}
+
+.game-window {
+    width: 90%;
+    max-width: 500px;
+    background: #1a1a1a;
+    border: 2px solid #800000;
+    /* Твой Бордо */
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(128, 0, 0, 0.5);
+}
+
+.game-header {
+    background: #242424;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #4B0082;
+    /* Твой Фиолет */
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.game-score-board {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    color: #fff;
+    font-family: 'digital_7', monospace;
+    font-size: 1.2rem;
+    background: #000;
+    border-bottom: 1px solid #4B0082;
+}
+#currentScore { color: #800000; } /* Бордовый для текущих */
+#highScore { color: #4B0082; }    /* Фиолетовый для рекорда */
+
+canvas {
+    display: block;
+    margin: 20px auto;
+    background: #000;
+    max-width: 100%;
+    height: auto;
+}

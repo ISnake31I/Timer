@@ -6,7 +6,8 @@
 
 .body-bg {
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
+    /* Важно: min-height вместо height */
     font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     font-size: 1rem;
     font-weight: 400;
@@ -16,11 +17,19 @@
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     display: flex;
+    flex-direction: column;
+    /* Складываем элементы вертикально */
+    align-items: center;
+    /* Центр по горизонтали */
     justify-content: center;
+    /* Центр по вертикали */
+    overflow-x: hidden;
 }
 
-.timer {
-    display: flex;
+.timer,
+.timer__placeholder {
+    display: none !important;
+    /* Оба спят при загрузке */
     align-items: center;
 }
 
@@ -39,33 +48,26 @@
     text-align: center;
     line-height: 1;
     font-weight: bold;
-
     /* 1. ПОДКЛЮЧАЕМ ТОЧНОЕ ИМЯ ШРИФТОВ */
     font-family: 'digital_7', 'Courier New', monospace;
-
     font-size: 6rem;
     /* Сделай побольше, палочки любят масштаб! */
     font-weight: normal;
     /* Важно! Digital-шрифты часто не имеют Bold-версии и могут "ломаться" */
-
     /* магия градиента */
     background: linear-gradient(45deg, #ff0000, #ff7b00, #ff0000);
     background-size: 300% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-
     /* 2. ДОБАВИМ НЕОНОВОЕ СВЕЧЕНИЕ (под стиль палочек) */
     filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.3));
-
     animation: gradient-move 7s ease infinite;
-
     display: inline-block;
     /* Чтобы min-width работало */
     min-width: 100px;
     /* Подбери число, чтобы самая широкая цифра (88) влезала с запасом */
     text-align: center;
     /* Центруем цифры внутри этого жесткого блока */
-
     /* МАГИЯ МОНОШИРИННОСТИ: */
     font-variant-numeric: tabular-nums;
     letter-spacing: 0;
@@ -95,34 +97,26 @@
     bottom: -20px;
     /* Опустим пониже, чтобы не наезжали на цифры */
     transform: translateX(-50%);
-
     /* 1. ПОДКЛЮЧАЕМ ТОЧНОЕ ИМЯ ИЗ ТВОЕГО @FONT-FACE */
     font-family: 'digital_7', 'Courier New', monospace;
-
     font-size: 1.1rem;
     /* Сделай побольше, палочки любят масштаб! */
     font-weight: normal;
     /* Важно! Digital-шрифты часто не имеют Bold-версии и могут "ломаться" */
     letter-spacing: 2px;
     /* Настрой по вкусу, чтобы цифры не слиплись в кашу */
-
     left: 50%;
     transform: translateX(-50%);
-
     /* КОРРЕКТИРОВКА ТУТ: */
     bottom: 3px;
     /* Начни с 5px и уменьшай/увеличивай, пока не встанет идеально под цифры */
-
-
     /* Твоя магия градиента */
     background: linear-gradient(45deg, #ff0000, #ff7b00, #ff0000);
     background-size: 300% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-
     /* 2. ДОБАВИМ НЕОНОВОЕ СВЕЧЕНИЕ (под стиль палочек) */
     filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.3));
-
     animation: gradient-move 7s ease infinite;
 }
 
@@ -131,11 +125,9 @@
     padding: 0;
     margin: 0;
     opacity: 0.8;
-
     /* 1. Делаем длинную ленту (300% высоты) */
     background: linear-gradient(to bottom, #6200ff, #f80000, #6200ff);
     background-size: 100% 300%;
-
     /* 2. Анимация (linear для бесконечного потока) */
     animation: divider-flow-down 5s linear infinite;
 }

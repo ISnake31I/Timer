@@ -1,0 +1,52 @@
+.lock-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; 
+    height: 100vh;
+    /* Твой Трио-градиент, но добавь !important чтобы никто не перебил */
+    background: linear-gradient(135deg, #000000 20%, #4a0404 50%, #240046 100%) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999 !important; /* Ультимативный верхний слой */
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lock-content {
+    text-align: center;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+}
+
+#passInput {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #4B0082;
+    padding: 10px 15px;
+    color: #fff;
+    border-radius: 5px;
+    outline: none;
+    box-shadow: 0 0 10px rgba(75, 0, 130, 0.3);
+}
+
+#unlockBtn {
+    background: #800000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+#unlockBtn:hover {
+    box-shadow: 0 0 20px #ff0000;
+}
+
+/* Класс для исчезновения */
+.unlocked {
+    opacity: 0;
+    visibility: hidden;
+}
