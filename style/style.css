@@ -8,6 +8,7 @@
 @import "./app-games.css";
 
 /* --------------------------------------------------- */
+
 body {
     margin: 0;
     padding: 0;
@@ -58,4 +59,11 @@ body {
     visibility: hidden;
     pointer-events: none;
     /* Чтобы не мешал нажимать на кнопки после исчезновения */
+}
+
+#snakeCanvas {
+    touch-action: none !important;
+}
+html, body {
+    overscroll-behavior-y: contain !important;
 }

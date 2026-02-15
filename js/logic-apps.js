@@ -1,45 +1,54 @@
-const appMilestones = [
-    { id: 'snakeGameBtn', date: '2026-02-17T00:00:00', msg: 'Привет! Создатель просил передать тебе игру на неделю :)' },
-    { id: 'mathIcon', date: '2026-03-01T00:00:00', msg: 'А вот и новая тренировка для мозга от создателя! :)' }
-];
-
-function checkAppAccess() {
-    const now = new Date().getTime();
-    appMilestones.forEach(app => {
-        const unlockTime = new Date(app.date).getTime();
-        const element = document.getElementById(app.id);
-        
-        if (now >= unlockTime) {
-            // element.classList.remove('hidden-app');
-            // Тут можно менять текст приветствия в твоем статус-баре
-            const statusText = document.getElementById('statusText');
-            if (statusText) statusText.innerText = app.msg;
-        } else {
-            // element.classList.add('hidden-app');
-        }
-    });
-}
-setInterval(checkAppAccess, 1000); // Проверка каждую секунду
 // Ждем, пока DOM загрузится
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // Клик по Змейке
     const snakeBtn = document.getElementById('snakeGameBtn');
+    const gameContainer = document.getElementById('gameOverlay');
+    const closeBtn = document.getElementById('closeGameBtn'); // Находим крестик
+
+    // ОТКРЫТИЕ (iOS Style)
     if (snakeBtn) {
-        snakeBtn.addEventListener('click', () => {
-            // Если иконка не скрыта (значит дата наступила)
+        snakeBtn.addEventListener('click', (e) => {
             if (!snakeBtn.classList.contains('hidden-app')) {
-                openSnakeGame(); // Эту функцию мы сейчас пропишем
+                const rect = snakeBtn.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                gameContainer.style.transformOrigin = `${centerX}px ${centerY}px`;
+                openSnakeGame();
             }
+        });
+    }
+
+    // ЗАКРЫТИЕ (Reverse iOS Style — Фикс схлопывания)
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            // 1. УБИРАЕМ АКТИВНЫЙ КЛАСС (запускаем обратный scale(0))
+            gameContainer.classList.remove('active');
+
+            // ВАЖНО: Мы НЕ меняем display: none сразу, 
+            // иначе анимация мгновенно исчезнет, не успев схлопнуться.
+
+            // 2. ТАЙМЕР НА ПОЛНОЕ ИСЧЕЗНОВЕНИЕ (0.5 сек — как в CSS transition)
+            setTimeout(() => {
+                // Только когда окно уже стало точкой (scale 0), гасим его совсем
+                if (!gameContainer.classList.contains('active')) {
+                    gameContainer.style.display = 'none';
+                    // Глушим игру
+                    if (typeof gameLoop !== 'undefined') clearInterval(gameLoop);
+                }
+            }, 500);
         });
     }
 });
 
 function openSnakeGame() {
-    console.log("Запуск Змейки... 🐍");
-    const gameContainer = document.getElementById('snakeGameContainer');
+    console.log("PROJECT: ANGEL OS — Launching Snake... 🐍");
+    const gameContainer = document.getElementById('gameOverlay');
     if (gameContainer) {
-        gameContainer.style.display = 'flex'; // Показываем окно с игрой
-        // Здесь мы будем вызывать старт самой игры из твоего CodePen
+        gameContainer.style.display = 'flex';
+        setTimeout(() => {
+            gameContainer.classList.add('active');
+        }, 10);
+
+        if (typeof initGame === "function") initGame();
     }
 }
