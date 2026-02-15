@@ -1,14 +1,16 @@
 .lock-overlay {
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; 
+    top: 0;
+    left: 0;
+    width: 100vw;
     height: 100vh;
     /* Твой Трио-градиент, но добавь !important чтобы никто не перебил */
     background: linear-gradient(135deg, #000000 20%, #4a0404 50%, #240046 100%) !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999999 !important; /* Ультимативный верхний слой */
+    z-index: 999999 !important;
+    /* Ультимативный верхний слой */
     opacity: 1;
     visibility: visible;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -21,6 +23,8 @@
 }
 
 #passInput {
+    font-size: 16px !important;
+    /* Убирает авто-зум на iOS */
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid #4B0082;
     padding: 10px 15px;
