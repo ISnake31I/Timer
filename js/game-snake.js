@@ -9,7 +9,42 @@ document.addEventListener('DOMContentLoaded', () => {
     let snake, food, score, d, gameLoop;
     let inputQueue = [];
 
-    // 1. УМНЫЙ СПАВН (Чтобы не в змейке)
+    // --- 1. ЛОГИКА ОТКРЫТИЯ (ВЗЛЕТ ИЗ ИКОНКИ) ---
+    if (snakeBtn) {
+        snakeBtn.addEventListener('click', () => {
+            const rect = snakeBtn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            overlay.style.transformOrigin = `${centerX}px ${centerY}px`;
+            overlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                overlay.classList.add('active');
+                initGame();
+            }, 10);
+        });
+    }
+
+    // --- 2. ЛОГИКА ЗАКРЫТИЯ (СХЛОПЫВАНИЕ В ИКОНКУ) ---
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            // Сначала запускаем анимацию уменьшения
+            overlay.classList.remove('active');
+            
+            // Ждем 500мс (время анимации в CSS) и только потом гасим блок полностью
+            setTimeout(() => {
+                if (!overlay.classList.contains('active')) {
+                    overlay.style.display = 'none';
+                    clearInterval(gameLoop);
+                }
+            }, 500);
+        });
+    }
+
+    // --- 3. БЛОКИРОВКА ДЕРГАНЬЯ ЭКРАНА (IPHONE) ---
+    overlay.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
     function createFood() {
         let newFood;
         while (true) {
@@ -17,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 x: Math.floor(Math.random() * (canvas.width / box)) * box,
                 y: Math.floor(Math.random() * (canvas.height / box)) * box
             };
-            // Проверка: не лежит ли еда на любом сегменте змейки
             let onSnake = snake.some(part => part.x === newFood.x && part.y === newFood.y);
             if (!onSnake) break;
         }
@@ -31,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('currentScore').style.color = "#800000";
 
         snake = [{ x: 9 * box, y: 10 * box }];
-        food = createFood(); // Запуск умного спавна
+        food = createFood();
         score = 0;
         d = null;
         inputQueue = [];
@@ -39,10 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameLoop = setInterval(draw, 150);
     }
 
-    if (snakeBtn) snakeBtn.addEventListener('click', () => { overlay.style.display = 'flex'; initGame(); });
-    if (closeBtn) closeBtn.addEventListener('click', () => { overlay.style.display = 'none'; clearInterval(gameLoop); });
-
-    // УПРАВЛЕНИЕ (КЛАВА)
+    // --- УПРАВЛЕНИЕ (КЛАВА + WASD) ---
     document.addEventListener("keydown", event => {
         const key = event.keyCode;
         let nextMove = null;
@@ -60,17 +91,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // УПРАВЛЕНИЕ (СВАЙПЫ - МГНОВЕННЫЕ)
+    // --- УПРАВЛЕНИЕ (СВАЙПЫ - МГНОВЕННЫЕ) ---
     let touchstartX = 0, touchstartY = 0;
     const threshold = 15;
     canvas.addEventListener('touchstart', e => {
         touchstartX = e.changedTouches[0].screenX;
         touchstartY = e.changedTouches[0].screenY;
     }, { passive: true });
+
     canvas.addEventListener('touchmove', e => {
         if (!touchstartX || !touchstartY) return;
         let xDiff = e.changedTouches[0].screenX - touchstartX;
         let yDiff = e.changedTouches[0].screenY - touchstartY;
+
         if (Math.abs(xDiff) > threshold || Math.abs(yDiff) > threshold) {
             let swipeMove = Math.abs(xDiff) > Math.abs(yDiff) ? (xDiff > 0 ? "RIGHT" : "LEFT") : (yDiff > 0 ? "DOWN" : "UP");
             const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : d;
@@ -93,33 +126,23 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // --- 1. ГРАДИЕНТНАЯ ЗМЕЙКА (ФИКС ГОЛОВЫ И ЦВЕТА) ---
         for (let i = 0; i < snake.length; i++) {
             if (i === 0) {
-                // ГОЛОВА: Глубокий, темный, насыщенный бордо (Darker & Bold)
                 ctx.fillStyle = "#660000"; 
                 ctx.shadowBlur = 5;
-                ctx.shadowColor = "#ff0000"; // Легкий ореол, чтобы видеть "лицо"
+                ctx.shadowColor = "#ff0000";
             } else {
-                // ТЕЛО: Начинаем с более светлого и уходим в тень
-                // Это создаст контраст с темной головой
                 let ratio = i / snake.length;
                 let r = Math.floor(100 - (ratio * 60)); 
                 ctx.fillStyle = `rgb(${r}, 0, 0)`;
                 ctx.shadowBlur = 0;
             }
-            
-            // Рисуем сегмент (Math.round для исключения фантомов)
             ctx.fillRect(Math.round(snake[i].x), Math.round(snake[i].y), box, box);
-            
-            // Тонкая сетка между сегментами
             ctx.strokeStyle = "rgba(0, 0, 0, 0.6)";
             ctx.lineWidth = 1;
             ctx.strokeRect(Math.round(snake[i].x), Math.round(snake[i].y), box, box);
         }
-        ctx.shadowBlur = 0; // Сброс тени
 
-        // --- 2. ЕДА (ФИКС КООРДИНАТ) ---
         ctx.fillStyle = "#4B0082"; 
         ctx.fillRect(Math.round(food.x), Math.round(food.y), box, box);
 
@@ -135,8 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let newHead = { x: snakeX, y: snakeY };
 
-        // --- 3. ПРОВЕРКА ЕДЫ (ЖЕСТКОЕ СРАВНЕНИЕ) ---
-        // Используем Math.round, чтобы 199.999 стало 200
         if (Math.round(snakeX) === Math.round(food.x) && Math.round(snakeY) === Math.round(food.y)) {
             score++;
             document.getElementById('currentScore').innerText = "Очки: " + score;
@@ -145,12 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('snakeRecord', score);
                 document.getElementById('highScore').innerText = "Рекорд: " + score;
             }
-            food = createFood(); // Твой умный спавн
+            food = createFood();
         } else {
             snake.pop();
         }
 
-        // Логика смерти (границы)
         if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
             clearInterval(gameLoop);
             document.getElementById('currentScore').innerText = "GAME OVER!";

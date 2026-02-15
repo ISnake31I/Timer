@@ -19,23 +19,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ЗАКРЫТИЕ (Reverse iOS Style — Фикс схлопывания)
+    // ЗАКРЫТИЕ (Reverse iOS Style — ФИКС СХЛОПЫВАНИЯ В ИКОНКУ)
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
-            // 1. УБИРАЕМ АКТИВНЫЙ КЛАСС (запускаем обратный scale(0))
-            gameContainer.classList.remove('active');
+            const snakeBtn = document.getElementById('snakeGameBtn');
+            const gameContainer = document.getElementById('gameOverlay');
 
-            // ВАЖНО: Мы НЕ меняем display: none сразу, 
-            // иначе анимация мгновенно исчезнет, не успев схлопнуться.
+            // 1. Снова вычисляем координаты иконки (на всякий случай)
+            const rect = snakeBtn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
 
-            // 2. ТАЙМЕР НА ПОЛНОЕ ИСЧЕЗНОВЕНИЕ (0.5 сек — как в CSS transition)
+            // 2. ФИКС: Удерживаем точку схлопывания именно в иконке
+            gameContainer.style.transformOrigin = `${centerX}px ${centerY}px`;
+
+            // 3. Запускаем анимацию уменьшения
+            gameContainer.classList.remove('active'); 
+            
+            // 4. Ждем завершения анимации (0.5 сек) и гасим блок
             setTimeout(() => {
-                // Только когда окно уже стало точкой (scale 0), гасим его совсем
+                // Если за это время мы не нажали "Открыть" снова
                 if (!gameContainer.classList.contains('active')) {
                     gameContainer.style.display = 'none';
-                    // Глушим игру
-                    if (typeof gameLoop !== 'undefined') clearInterval(gameLoop);
+                    if (typeof gameLoop !== 'undefined') clearInterval(gameLoop); 
                 }
-            }, 500);
+            }, 500); 
         });
     }
 });
