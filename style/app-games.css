@@ -55,6 +55,9 @@
 
 /* =================================== */
 .game-overlay {
+    touch-action: none !important;
+    /* Запрещает браузеру обрабатывать жесты как системные */
+    overscroll-behavior: none !important;
     position: fixed;
     top: 0;
     left: 0;

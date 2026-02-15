@@ -62,8 +62,14 @@ body {
 }
 
 #snakeCanvas {
-    touch-action: none !important;
+    touch-action: none !important; /* Чтобы свайпы шли ТОЛЬКО в игру */
 }
+/* Блокируем системный отскок и обновление на всем сайте */
 html, body {
-    overscroll-behavior-y: contain !important;
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    overscroll-behavior-y: none !important; /* Убивает Pull-to-Refresh */
+    -webkit-overflow-scrolling: touch;
 }
