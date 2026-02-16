@@ -73,8 +73,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateUI() {
-        document.getElementById('currentScore').innerText = `Очки: ${score} | [${currentDifficulty}]`;
-        document.getElementById('highScore').innerText = "Record: " + (localStorage.getItem(`snakeRec_${currentDifficulty}`) || 0);
+        const scoreEl = document.getElementById('currentScore');
+        const highEl = document.getElementById('highScore');
+
+        if (scoreEl) {
+            // Убираем палочку, оставляем только скобки
+            scoreEl.innerText = `Очки: ${score} [${currentDifficulty}]`;
+        }
+
+        if (highEl) {
+            // Переводим на русский для единства стиля
+            const savedRec = localStorage.getItem(`snakeRec_${currentDifficulty}`) || 0;
+            highEl.innerText = `Рекорд: ${savedRec}`;
+        }
     }
 
     function draw() {
