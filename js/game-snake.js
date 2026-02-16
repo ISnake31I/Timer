@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'EASY': { speed: 50, wallDeath: false, accelerate: false, obsCount: 0 },
         'MEDIUM': { speed: 45, wallDeath: true, accelerate: false, obsCount: 0 },
         'HARD': { speed: 40, wallDeath: true, accelerate: true, obsCount: 0 },
-        'ULTRA': { speed: 35, wallDeath: true, accelerate: true, obsCount: 4 } // Меньше стен, но они длиннее
+        'ULTRA': { speed: 35, wallDeath: true, accelerate: true, obsCount: 5 }
     };
 
     function initGame(diff = 'EASY') {
@@ -38,26 +38,18 @@ document.addEventListener('DOMContentLoaded', () => {
         gameLoop = setInterval(draw, currentSpeed);
     }
 
-    // --- ЛАБИРИНТЫ (ОТ 4 ДО 10 БЛОКОВ) ---
     function generateWideLabyrinth(count) {
         obstacles = [];
         for (let i = 0; i < count; i++) {
-            // Генерим старт на "чётных" линиях (40, 80, 120...), 
-            // чтобы между стенами всегда был коридор в одну клетку (20px)
             let startX = (Math.floor(Math.random() * 7) * 2 + 2) * box;
             let startY = (Math.floor(Math.random() * 7) * 2 + 2) * box;
             let isVert = Math.random() > 0.5;
-
-            // ВОТ ОНО: ДЛИНА ОТ 4 ДО 10 БЛОКОВ
-            let len = Math.floor(Math.random() * 7) + 4;
+            let len = Math.floor(Math.random() * 7) + 4; // 4-10 блоков
 
             for (let j = 0; j < len; j++) {
                 let obsX = isVert ? startX : startX + (j * box);
                 let obsY = isVert ? startY + (j * box) : startY;
-
-                // Проверка, чтобы стена не вылетела за края Canvas (400x400)
                 if (obsX >= 20 && obsX <= 360 && obsY >= 20 && obsY <= 360) {
-                    // Оставляем центр (200, 200) свободным для спавна змейки
                     if (Math.abs(obsX - 200) > 60 || Math.abs(obsY - 200) > 60) {
                         obstacles.push({ x: obsX, y: obsY });
                     }
@@ -86,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function draw() {
-        // Поворот в узлах 20px
         if (snake[0].x % box === 0 && snake[0].y % box === 0) {
             if (inputQueue.length > 0) d = inputQueue.shift();
         }
@@ -94,18 +85,19 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Сетка
-        ctx.strokeStyle = "#080808";
+        // ОТРИСОВКА СЕТКИ (Фикс для iPhone)
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.075)"; // Очень тонкий белый (5% прозрачности)
+        // ИЛИ если хочешь в цвет проекта:
+        // ctx.strokeStyle = "rgba(75, 0, 130, 0.15)"; // Тонкий фиолетовый
+        ctx.lineWidth = 0.5; // Сделаем линию тоньше, но заметнее за счет цвета
         for (let i = 0; i <= canvas.width; i += box) {
             ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
         }
 
-        // Стены
         ctx.fillStyle = "#222";
         obstacles.forEach(o => ctx.fillRect(o.x + 1, o.y + 1, box - 2, box - 2));
 
-        // Змейка (Градиент)
         snake.forEach((p, i) => {
             if (i === 0) ctx.fillStyle = "#800000";
             else {
@@ -167,7 +159,34 @@ document.addEventListener('DOMContentLoaded', () => {
         snake.unshift(newHead);
     }
 
-    // --- ФИКС СВАЙПОВ (Жесткая очередь) ---
+    // --- ЛОГИКА ОТКРЫТИЯ (СХЛОПЫВАНИЕ) ---
+    if (snakeBtn) {
+        snakeBtn.addEventListener('click', () => {
+            const rect = snakeBtn.getBoundingClientRect();
+            overlay.style.transformOrigin = `${rect.left + rect.width / 2}px ${rect.top + rect.height / 2}px`;
+            overlay.style.display = 'flex';
+            setTimeout(() => { overlay.classList.add('active'); initGame('EASY'); }, 10);
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            overlay.classList.remove('active');
+            setTimeout(() => { overlay.style.display = 'none'; clearInterval(gameLoop); }, 400);
+        });
+    }
+
+    // --- УПРАВЛЕНИЕ ---
+    function handleInput(m) {
+        const last = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : d;
+        if ((m == "LEFT" && last != "RIGHT" && last != "LEFT") ||
+            (m == "UP" && last != "DOWN" && last != "UP") ||
+            (m == "RIGHT" && last != "LEFT" && last != "RIGHT") ||
+            (m == "DOWN" && last != "UP" && last != "DOWN")) {
+            inputQueue.push(m);
+        }
+    }
+
     document.addEventListener("keydown", e => {
         const k = e.keyCode;
         let m = null;
@@ -179,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     let tsX, tsY;
-    canvas.addEventListener('touchstart', e => { tsX = e.touches[0].clientX; tsY = e.touches[0].clientY; });
+    canvas.addEventListener('touchstart', e => { tsX = e.touches[0].clientX; tsY = e.touches[0].clientY; }, { passive: true });
     canvas.addEventListener('touchmove', e => {
         if (!tsX || !tsY) return;
         let xD = tsX - e.touches[0].clientX;
@@ -189,20 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
             handleInput(m);
             tsX = e.touches[0].clientX; tsY = e.touches[0].clientY;
         }
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
     }, { passive: false });
 
-    function handleInput(m) {
-        const last = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : d;
-        if ((m == "LEFT" && last != "RIGHT" && last != "LEFT") ||
-            (m == "UP" && last != "DOWN" && last != "UP") ||
-            (m == "RIGHT" && last != "LEFT" && last != "RIGHT") ||
-            (m == "DOWN" && last != "UP" && last != "DOWN")) {
-            inputQueue.push(m);
-        }
-    }
-
     window.setDifficulty = (level) => initGame(level);
-    if (snakeBtn) snakeBtn.addEventListener('click', () => { overlay.style.display = 'flex'; initGame('EASY'); });
-    if (closeBtn) closeBtn.addEventListener('click', () => { overlay.style.display = 'none'; clearInterval(gameLoop); });
 });

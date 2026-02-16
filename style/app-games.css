@@ -210,3 +210,23 @@ canvas {
     background: #555;
     box-shadow: inset 0 0 5px #000;
 }
+
+.control-hint {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-right: auto;
+    margin-left: 15px;
+}
+
+/* Анимация схлопывания (убедись, что она есть) */
+.game-overlay {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    transform: scale(0);
+    opacity: 0;
+}
+.game-overlay.active {
+    transform: scale(1);
+    opacity: 1;
+}
