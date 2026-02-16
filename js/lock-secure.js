@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkSession();
 
     const checkPass = () => {
-        if (passInput.value.toLowerCase() === '123123') {
+        if (passInput.value.toLowerCase() === 'Окак123123321') {
             localStorage.setItem('lastLoginTime', new Date().getTime());
             lockscreen.classList.add('unlocked');
             if (mainContent) mainContent.style.opacity = '1';
@@ -31,4 +31,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     unlockBtn.addEventListener('click', checkPass);
     passInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPass(); });
+
 });
