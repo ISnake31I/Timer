@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // ОТРИСОВКА СЕТКИ (Фикс для iPhone)
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.075)"; // Очень тонкий белый (5% прозрачности)
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.275)"; // Очень тонкий белый (5% прозрачности)
         // ИЛИ если хочешь в цвет проекта:
         // ctx.strokeStyle = "rgba(75, 0, 130, 0.15)"; // Тонкий фиолетовый
         ctx.lineWidth = 0.5; // Сделаем линию тоньше, но заметнее за счет цвета
