@@ -6,202 +6,203 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext("2d");
 
     let box = 20;
+    let moveStep = 5;
     let snake, food, score, d, gameLoop;
     let inputQueue = [];
+    let currentDifficulty = 'EASY';
+    let obstacles = [];
+    let currentSpeed = 50;
 
-    // --- 1. ЛОГИКА ОТКРЫТИЯ (ВЗЛЕТ ИЗ ИКОНКИ) ---
-    if (snakeBtn) {
-        snakeBtn.addEventListener('click', () => {
-            const rect = snakeBtn.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
+    const diffSettings = {
+        'EASY': { speed: 50, wallDeath: false, accelerate: false, obsCount: 0 },
+        'MEDIUM': { speed: 45, wallDeath: true, accelerate: false, obsCount: 0 },
+        'HARD': { speed: 40, wallDeath: true, accelerate: true, obsCount: 0 },
+        'ULTRA': { speed: 35, wallDeath: true, accelerate: true, obsCount: 4 } // Меньше стен, но они длиннее
+    };
 
-            overlay.style.transformOrigin = `${centerX}px ${centerY}px`;
-            overlay.style.display = 'flex';
+    function initGame(diff = 'EASY') {
+        currentDifficulty = diff;
+        const settings = diffSettings[diff];
+        currentSpeed = settings.speed;
 
-            setTimeout(() => {
-                overlay.classList.add('active');
-                initGame();
-            }, 10);
-        });
+        snake = [];
+        for (let i = 4; i >= 0; i--) snake.push({ x: 200 + (i * moveStep), y: 200 });
+
+        score = 0; d = null; inputQueue = []; obstacles = [];
+        if (settings.obsCount > 0) generateWideLabyrinth(settings.obsCount);
+
+        food = createFood();
+        updateUI();
+
+        if (gameLoop) clearInterval(gameLoop);
+        gameLoop = setInterval(draw, currentSpeed);
     }
 
-    // --- 2. ЛОГИКА ЗАКРЫТИЯ (СХЛОПЫВАНИЕ В ИКОНКУ) ---
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-            // Сначала запускаем анимацию уменьшения
-            overlay.classList.remove('active');
+    // --- ЛАБИРИНТЫ (ОТ 4 ДО 10 БЛОКОВ) ---
+    function generateWideLabyrinth(count) {
+        obstacles = [];
+        for (let i = 0; i < count; i++) {
+            // Генерим старт на "чётных" линиях (40, 80, 120...), 
+            // чтобы между стенами всегда был коридор в одну клетку (20px)
+            let startX = (Math.floor(Math.random() * 7) * 2 + 2) * box;
+            let startY = (Math.floor(Math.random() * 7) * 2 + 2) * box;
+            let isVert = Math.random() > 0.5;
 
-            // Ждем 500мс (время анимации в CSS) и только потом гасим блок полностью
-            setTimeout(() => {
-                if (!overlay.classList.contains('active')) {
-                    overlay.style.display = 'none';
-                    clearInterval(gameLoop);
+            // ВОТ ОНО: ДЛИНА ОТ 4 ДО 10 БЛОКОВ
+            let len = Math.floor(Math.random() * 7) + 4;
+
+            for (let j = 0; j < len; j++) {
+                let obsX = isVert ? startX : startX + (j * box);
+                let obsY = isVert ? startY + (j * box) : startY;
+
+                // Проверка, чтобы стена не вылетела за края Canvas (400x400)
+                if (obsX >= 20 && obsX <= 360 && obsY >= 20 && obsY <= 360) {
+                    // Оставляем центр (200, 200) свободным для спавна змейки
+                    if (Math.abs(obsX - 200) > 60 || Math.abs(obsY - 200) > 60) {
+                        obstacles.push({ x: obsX, y: obsY });
+                    }
                 }
-            }, 500);
-        });
+            }
+        }
     }
-
-    // --- 3. БЛОКИРОВКА ДЕРГАНЬЯ ЭКРАНА (IPHONE) ---
-    overlay.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
     function createFood() {
-        let newFood;
+        let f;
         while (true) {
-            newFood = {
-                x: Math.floor(Math.random() * (canvas.width / box)) * box,
-                y: Math.floor(Math.random() * (canvas.height / box)) * box
+            f = {
+                x: Math.floor(Math.random() * 18 + 1) * box,
+                y: Math.floor(Math.random() * 18 + 1) * box
             };
-            let onSnake = snake.some(part => part.x === newFood.x && part.y === newFood.y);
-            if (!onSnake) break;
+            let onSnake = snake.some(p => Math.abs(p.x - f.x) < 15 && Math.abs(p.y - f.y) < 15);
+            let onObs = obstacles.some(o => o.x === f.x && o.y === f.y);
+            if (!onSnake && !onObs) break;
         }
-        return newFood;
+        return f;
     }
 
-    function initGame() {
-        let savedRecord = localStorage.getItem('snakeRecord') || 0;
-        document.getElementById('highScore').innerText = "Рекорд: " + savedRecord;
-        document.getElementById('currentScore').innerText = "Очки: 0";
-        document.getElementById('currentScore').style.color = "#800000";
-
-        snake = [{ x: 9 * box, y: 10 * box }];
-        food = createFood();
-        score = 0;
-        d = null;
-        inputQueue = [];
-        if (gameLoop) clearInterval(gameLoop);
-        gameLoop = setInterval(draw, 150);
-    }
-
-    // --- УПРАВЛЕНИЕ (КЛАВА + WASD) ---
-    document.addEventListener("keydown", event => {
-        const key = event.keyCode;
-        let nextMove = null;
-        if (key == 37 || key == 65) nextMove = "LEFT";
-        else if (key == 38 || key == 87) nextMove = "UP";
-        else if (key == 39 || key == 68) nextMove = "RIGHT";
-        else if (key == 40 || key == 83) nextMove = "DOWN";
-
-        if (nextMove) {
-            const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : d;
-            if (nextMove == "LEFT" && lastDir != "RIGHT" && lastDir != "LEFT") inputQueue.push(nextMove);
-            else if (nextMove == "UP" && lastDir != "DOWN" && lastDir != "UP") inputQueue.push(nextMove);
-            else if (nextMove == "RIGHT" && lastDir != "LEFT" && lastDir != "RIGHT") inputQueue.push(nextMove);
-            else if (nextMove == "DOWN" && lastDir != "UP" && lastDir != "DOWN") inputQueue.push(nextMove);
-        }
-    });
-
-    // --- УПРАВЛЕНИЕ (СВАЙПЫ - МГНОВЕННЫЕ) ---
-    let touchstartX = 0, touchstartY = 0;
-    const threshold = 15;
-    canvas.addEventListener('touchstart', e => {
-        touchstartX = e.changedTouches[0].screenX;
-        touchstartY = e.changedTouches[0].screenY;
-    }, { passive: true });
-
-    canvas.addEventListener('touchmove', e => {
-        if (!touchstartX || !touchstartY) return;
-
-        let xDiff = e.changedTouches[0].screenX - touchstartX;
-        let yDiff = e.changedTouches[0].screenY - touchstartY;
-
-        // ПОРОГ ЧУВСТВИТЕЛЬНОСТИ (20-30 - золотая середина)
-        const threshold = 25;
-
-        if (Math.abs(xDiff) > threshold || Math.abs(yDiff) > threshold) {
-            let swipeMove = null;
-
-            // Определяем доминирующее направление (что сильнее: влево/вправо или вверх/вниз)
-            if (Math.abs(xDiff) > Math.abs(yDiff)) {
-                swipeMove = xDiff > 0 ? "RIGHT" : "LEFT";
-            } else {
-                swipeMove = yDiff > 0 ? "DOWN" : "UP";
-            }
-
-            if (swipeMove) {
-                const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : d;
-
-                // Проверка на 180 градусов (чтобы не самоубиться)
-                if ((swipeMove == "LEFT" && lastDir != "RIGHT" && lastDir != "LEFT") ||
-                    (swipeMove == "UP" && lastDir != "DOWN" && lastDir != "UP") ||
-                    (swipeMove == "RIGHT" && lastDir != "LEFT" && lastDir != "RIGHT") ||
-                    (swipeMove == "DOWN" && lastDir != "UP" && lastDir != "DOWN")) {
-
-                    inputQueue.push(swipeMove); // КЛАДЕМ В ТВОЮ ОЧЕРЕДЬ
-
-                    // МАГИЯ Г-ОБРАЗНОГО СВАЙПА: сбрасываем точку старта на текущую
-                    touchstartX = e.changedTouches[0].screenX;
-                    touchstartY = e.changedTouches[0].screenY;
-                }
-            }
-        }
-        // УБИВАЕМ ДЕРГАНЬЕ ЭКРАНА SAFARI
-        if (e.cancelable) e.preventDefault();
-    }, { passive: false });
-
-    function collision(head, array) {
-        for (let i = 0; i < array.length; i++) if (head.x == array[i].x && head.y == array[i].y) return true;
-        return false;
+    function updateUI() {
+        document.getElementById('currentScore').innerText = `Очки: ${score} | [${currentDifficulty}]`;
+        document.getElementById('highScore').innerText = "Record: " + (localStorage.getItem(`snakeRec_${currentDifficulty}`) || 0);
     }
 
     function draw() {
-        if (inputQueue.length > 0) d = inputQueue.shift();
+        // Поворот в узлах 20px
+        if (snake[0].x % box === 0 && snake[0].y % box === 0) {
+            if (inputQueue.length > 0) d = inputQueue.shift();
+        }
 
         ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        for (let i = 0; i < snake.length; i++) {
-            if (i === 0) {
-                ctx.fillStyle = "#660000";
-                ctx.shadowBlur = 5;
-                ctx.shadowColor = "#ff0000";
-            } else {
-                let ratio = i / snake.length;
-                let r = Math.floor(100 - (ratio * 60));
-                ctx.fillStyle = `rgb(${r}, 0, 0)`;
-                ctx.shadowBlur = 0;
-            }
-            ctx.fillRect(Math.round(snake[i].x), Math.round(snake[i].y), box, box);
-            ctx.strokeStyle = "rgba(0, 0, 0, 0.6)";
-            ctx.lineWidth = 1;
-            ctx.strokeRect(Math.round(snake[i].x), Math.round(snake[i].y), box, box);
+        // Сетка
+        ctx.strokeStyle = "#080808";
+        for (let i = 0; i <= canvas.width; i += box) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
         }
 
+        // Стены
+        ctx.fillStyle = "#222";
+        obstacles.forEach(o => ctx.fillRect(o.x + 1, o.y + 1, box - 2, box - 2));
+
+        // Змейка (Градиент)
+        snake.forEach((p, i) => {
+            if (i === 0) ctx.fillStyle = "#800000";
+            else {
+                let ratio = i / snake.length;
+                ctx.fillStyle = `rgb(${Math.max(25, 90 - (ratio * 60))}, 0, 0)`;
+            }
+            ctx.fillRect(p.x + 1, p.y + 1, box - 2, box - 2);
+        });
+
         ctx.fillStyle = "#4B0082";
-        ctx.fillRect(Math.round(food.x), Math.round(food.y), box, box);
+        ctx.fillRect(food.x + 1, food.y + 1, box - 2, box - 2);
 
         if (!d) return;
 
         let snakeX = snake[0].x;
         let snakeY = snake[0].y;
 
-        if (d == "LEFT") snakeX -= box;
-        if (d == "UP") snakeY -= box;
-        if (d == "RIGHT") snakeX += box;
-        if (d == "DOWN") snakeY += box;
+        if (d == "LEFT") snakeX -= moveStep;
+        if (d == "UP") snakeY -= moveStep;
+        if (d == "RIGHT") snakeX += moveStep;
+        if (d == "DOWN") snakeY += moveStep;
+
+        const settings = diffSettings[currentDifficulty];
+
+        if (!settings.wallDeath) {
+            if (snakeX < 0) snakeX = canvas.width - moveStep;
+            else if (snakeX >= canvas.width) snakeX = 0;
+            if (snakeY < 0) snakeY = canvas.height - moveStep;
+            else if (snakeY >= canvas.height) snakeY = 0;
+        }
 
         let newHead = { x: snakeX, y: snakeY };
 
-        if (Math.round(snakeX) === Math.round(food.x) && Math.round(snakeY) === Math.round(food.y)) {
-            score++;
-            document.getElementById('currentScore').innerText = "Очки: " + score;
-            let currentRec = localStorage.getItem('snakeRecord') || 0;
-            if (score > currentRec) {
-                localStorage.setItem('snakeRecord', score);
-                document.getElementById('highScore').innerText = "Рекорд: " + score;
-            }
-            food = createFood();
-        } else {
-            snake.pop();
-        }
+        const hitWall = settings.wallDeath && (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height);
+        const hitSelf = snake.some((p, idx) => idx > 12 && p.x === newHead.x && p.y === newHead.y);
+        const hitObs = obstacles.some(o => Math.abs(o.x - snakeX) < 16 && Math.abs(o.y - snakeY) < 16);
 
-        if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
+        if (hitWall || hitSelf || hitObs) {
             clearInterval(gameLoop);
-            document.getElementById('currentScore').innerText = "GAME OVER!";
-            setTimeout(() => { initGame(); }, 1500);
+            setTimeout(() => { initGame(currentDifficulty); }, 1200);
             return;
         }
 
+        if (Math.abs(snakeX - food.x) < 8 && Math.abs(snakeY - food.y) < 8) {
+            score++;
+            if (settings.accelerate && score % 10 === 0) {
+                currentSpeed = Math.max(20, currentSpeed - 5);
+                clearInterval(gameLoop);
+                gameLoop = setInterval(draw, currentSpeed);
+            }
+            updateUI();
+            let recKey = `snakeRec_${currentDifficulty}`;
+            if (score > (localStorage.getItem(recKey) || 0)) localStorage.setItem(recKey, score);
+            food = createFood();
+            for (let j = 0; j < 4; j++) snake.push({ ...snake[snake.length - 1] });
+        } else {
+            snake.pop();
+        }
         snake.unshift(newHead);
     }
+
+    // --- ФИКС СВАЙПОВ (Жесткая очередь) ---
+    document.addEventListener("keydown", e => {
+        const k = e.keyCode;
+        let m = null;
+        if (k == 37 || k == 65) m = "LEFT";
+        if (k == 38 || k == 87) m = "UP";
+        if (k == 39 || k == 68) m = "RIGHT";
+        if (k == 40 || k == 83) m = "DOWN";
+        if (m) handleInput(m);
+    });
+
+    let tsX, tsY;
+    canvas.addEventListener('touchstart', e => { tsX = e.touches[0].clientX; tsY = e.touches[0].clientY; });
+    canvas.addEventListener('touchmove', e => {
+        if (!tsX || !tsY) return;
+        let xD = tsX - e.touches[0].clientX;
+        let yD = tsY - e.touches[0].clientY;
+        if (Math.abs(xD) > 20 || Math.abs(yD) > 20) {
+            let m = Math.abs(xD) > Math.abs(yD) ? (xD > 0 ? "LEFT" : "RIGHT") : (yD > 0 ? "UP" : "DOWN");
+            handleInput(m);
+            tsX = e.touches[0].clientX; tsY = e.touches[0].clientY;
+        }
+        e.preventDefault();
+    }, { passive: false });
+
+    function handleInput(m) {
+        const last = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : d;
+        if ((m == "LEFT" && last != "RIGHT" && last != "LEFT") ||
+            (m == "UP" && last != "DOWN" && last != "UP") ||
+            (m == "RIGHT" && last != "LEFT" && last != "RIGHT") ||
+            (m == "DOWN" && last != "UP" && last != "DOWN")) {
+            inputQueue.push(m);
+        }
+    }
+
+    window.setDifficulty = (level) => initGame(level);
+    if (snakeBtn) snakeBtn.addEventListener('click', () => { overlay.style.display = 'flex'; initGame('EASY'); });
+    if (closeBtn) closeBtn.addEventListener('click', () => { overlay.style.display = 'none'; clearInterval(gameLoop); });
 });

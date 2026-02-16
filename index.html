@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Что-то важное</title>
+    <title>ANGEL OS</title>
     <link rel="stylesheet" href="./style/style.css">
 </head>
 
@@ -77,6 +77,15 @@
                     <div id="currentScore">Очки: 0</div>
                     <div id="highScore">Рекорд: 0</div>
                 </div>
+
+                <!-- ДОБАВЛЯЕМ ПАНЕЛЬ СЛОЖНОСТИ -->
+                <div class="difficulty-panel">
+                    <button class="diff-btn" onclick="setDifficulty('EASY')">Easy</button>
+                    <button class="diff-btn" onclick="setDifficulty('MEDIUM')">Medium</button>
+                    <button class="diff-btn" onclick="setDifficulty('HARD')">Hard</button>
+                    <button class="diff-btn" onclick="setDifficulty('ULTRA')">Ultra</button>
+                </div>
+
                 <!-- Сюда JS отрисует нашу змейку -->
                 <canvas id="snakeCanvas" width="400" height="400"></canvas>
             </div>
