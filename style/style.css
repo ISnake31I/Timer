@@ -5,7 +5,10 @@
 @import "./style-lock-timer.css";
 @import "./style-timer.css";
 @import "./progress-bar.css";
+
 @import "./app-games.css";
+@import "./game-snake.css";
+@import "./game-tetris.css";
 
 /* --------------------------------------------------- */
 

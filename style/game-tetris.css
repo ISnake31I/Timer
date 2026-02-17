@@ -1,0 +1,56 @@
+/* style/game-tetris.css */
+
+.tetris-window {
+    background: #000;
+    border: 1px solid rgba(128, 0, 0, 0.4);
+    box-shadow: 0 0 30px rgba(75, 0, 130, 0.2);
+    width: 300px;
+    /* Тетрис уже змейки */
+    padding: 15px;
+    border-radius: 20px;
+}
+
+#tetrisCanvas {
+    background: #000;
+    display: block;
+    margin: 0 auto;
+    border: 2px solid #1a0000;
+    box-shadow: inset 0 0 10px rgba(128, 0, 0, 0.2);
+}
+
+.tetris-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: #800000;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+/* Эффект для блоков (применим в JS) */
+.tetris-block-glow {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+}
+
+.game-header {
+    display: flex;
+    justify-content: flex-end; /* Выталкивает крестик вправо */
+    padding: 10px;
+    width: 100%;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 50px;
+    cursor: pointer;
+    line-height: 1;
+    transition: transform 0.3s ease;
+}
+
+.close-btn:hover {
+    transform: scale(1.2);
+    color: #4B0082; /* Фиолетовый отблеск при наведении */
+}

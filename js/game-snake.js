@@ -154,19 +154,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (Math.abs(snakeX - food.x) < 8 && Math.abs(snakeY - food.y) < 8) {
             score++;
-            if (settings.accelerate && score % 10 === 0) {
-                currentSpeed = Math.max(20, currentSpeed - 5);
+            
+            // --- ФИКС УСКОРЕНИЯ: В 2 РАЗА ПЛАВНЕЕ ---
+            if (settings.accelerate) {
+                // Уменьшаем интервал всего на 0.25мс за каждое очко.
+                // Теперь реальный драйв начнется не на 10, а на 20-30 очках.
+                currentSpeed = Math.max(20, currentSpeed - 0.225); 
+                
                 clearInterval(gameLoop);
                 gameLoop = setInterval(draw, currentSpeed);
             }
+
             updateUI();
             let recKey = `snakeRec_${currentDifficulty}`;
-            if (score > (localStorage.getItem(recKey) || 0)) localStorage.setItem(recKey, score);
+            if (score > (localStorage.getItem(recKey) || 0)) {
+                localStorage.setItem(recKey, score);
+            }
+
             food = createFood();
-            for (let j = 0; j < 4; j++) snake.push({ ...snake[snake.length - 1] });
+
+            // --- ВОТ ОНО: ФОРСИРОВАННЫЙ РОСТ ---
+            // Добавляем 3 сегмента в то же место, где хвост сейчас.
+            // Вместе с новой головой (unshift ниже) это даст +4 сегмента (20px)
+            let tail = snake[snake.length - 1];
+            for (let j = 0; j < 3; j++) {
+                snake.push({ x: tail.x, y: tail.y });
+            }
+
+            // .pop() НЕ ДЕЛАЕМ, чтобы змейка выросла
         } else {
+            // ОБЫЧНЫЙ ХОД: отрезаем хвост
             snake.pop();
         }
+
+        // ВСЕГДА добавляем новую голову
         snake.unshift(newHead);
     }
 

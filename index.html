@@ -54,6 +54,10 @@
                 <div class="app-icon snake-icon">🐍</div>
                 <span>Snake</span>
             </div>
+            <div class="app-item" id="tetrisGameBtn">
+                <div class="app-icon tetris-icon">🧱</div>
+                <span>Tetris</span>
+            </div>
             <div class="app-item" id="mathIcon">
                 <div class="app-icon math-icon">🎲</div>
                 <span>2048</span>
@@ -93,6 +97,36 @@
         </div>
     </div>
 
+    <div id="tetrisOverlay" class="game-overlay" style="display: none;">
+        <div class="game-window">
+            <div class="game-header">
+                <!-- Даем уникальный ID именно для Тетриса -->
+                <button id="closeTetrisBtn" class="close-btn">×</button>
+            </div>
+            <div class="game-body tetris-flex">
+                <aside class="tetris-stats">
+                    <div class="stats-left">
+                        <div id="tetrisScore">Score: 0</div>
+                        <div id="tetrisLines">Lines: 0</div>
+                        <!-- ШПАРГАЛКА ТУТ -->
+                        <div class="tetris-help">
+                            <p>⬅️➡️ Сдвиг / Swipe</p>
+                            <p>⬆️ Поворот / Tap</p>
+                            <p>⬇️ Ускорить / Swipe Down</p>
+                        </div>
+                    </div>
+                    <div class="next-piece-box">
+                        <span>Next:</span>
+                        <!-- Увеличили канвас, чтобы влезла "палка" -->
+                        <canvas id="nextCanvas" width="100" height="100"></canvas>
+                    </div>
+                </aside>
+                <!-- Холст для Тетриса -->
+                <canvas id="tetrisCanvas" width="240" height="480"></canvas>
+            </div>
+        </div>
+    </div>
+
     <!-- ================================================ -->
     <!-- 1. Скрипт-контроллер: решает, показать "Упс..." или Таймер -->
     <script src="./js/ligic-lock-time.js"></script>
@@ -114,7 +148,10 @@
     <script src="./js/logic-apps.js"></script>
 
     <!-- 7. Приложения -->
+    <!-- 7.1 Змейка -->
     <script src="./js/game-snake.js"></script>
+    <!-- 7.2 Тетрис -->
+    <script src="./js/game-tetris.js"></script>
 </body>
 
 </html>
