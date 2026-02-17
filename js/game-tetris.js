@@ -23,13 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const COLORS = { I: '#700000', J: '#350060', L: '#500000', O: '#250045', S: '#600000', T: '#1a0035', Z: '#400000' };
 
     const PIECES = {
-        'I': [[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]],
-        'J': [[0,1,0],[0,1,0],[1,1,0]],
-        'L': [[0,1,0],[0,1,0],[0,1,1]],
-        'O': [[1,1],[1,1]],
-        'S': [[0,1,1],[1,1,0],[0,0,0]],
-        'T': [[0,1,0],[1,1,1],[0,0,0]],
-        'Z': [[1,1,0],[0,1,1],[0,0,0]]
+        'I': [[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0]],
+        'J': [[0, 1, 0], [0, 1, 0], [1, 1, 0]],
+        'L': [[0, 1, 0], [0, 1, 0], [0, 1, 1]],
+        'O': [[1, 1], [1, 1]],
+        'S': [[0, 1, 1], [1, 1, 0], [0, 0, 0]],
+        'T': [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
+        'Z': [[1, 1, 0], [0, 1, 1], [0, 0, 0]]
     };
 
     function cloneMatrix(m) { return m.map(row => [...row]); }
@@ -61,12 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drawMatrix(context, m, offset, isBoard, color) {
-        m.forEach((row, y) => { row.forEach((value, x) => {
-            if (value !== 0) {
-                context.fillStyle = value.color ? value.color : (value === 'flash' ? 'rgba(180, 0, 0, 0.9)' : (isBoard ? value : color));
-                context.fillRect((x + offset.x) * BLOCK_SIZE + 1, (y + offset.y) * BLOCK_SIZE + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2);
-            }
-        });});
+        m.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value !== 0) {
+                    context.fillStyle = value.color ? value.color : (value === 'flash' ? 'rgba(180, 0, 0, 0.9)' : (isBoard ? value : color));
+                    context.fillRect((x + offset.x) * BLOCK_SIZE + 1, (y + offset.y) * BLOCK_SIZE + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2);
+                }
+            });
+        });
     }
 
     function drawNext() {
@@ -169,37 +171,62 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', e => {
         if (gameOver) { if (e.keyCode === 38 || e.keyCode === 87) internalStart(); return; }
         if (isAnimating || !currentPiece) return;
-        if (e.keyCode === 37 || e.keyCode === 65) { currentPiece.pos.x--; if(collide(board, currentPiece)) currentPiece.pos.x++; }
-        if (e.keyCode === 39 || e.keyCode === 68) { currentPiece.pos.x++; if(collide(board, currentPiece)) currentPiece.pos.x--; }
+        if (e.keyCode === 37 || e.keyCode === 65) { currentPiece.pos.x--; if (collide(board, currentPiece)) currentPiece.pos.x++; }
+        if (e.keyCode === 39 || e.keyCode === 68) { currentPiece.pos.x++; if (collide(board, currentPiece)) currentPiece.pos.x--; }
         if (e.keyCode === 40 || e.keyCode === 83) playerDrop();
-        if (e.keyCode === 38 || e.keyCode === 87) { 
+        if (e.keyCode === 38 || e.keyCode === 87) {
             rotate(currentPiece.matrix);
-            if(collide(board, currentPiece)) { rotate(currentPiece.matrix); rotate(currentPiece.matrix); rotate(currentPiece.matrix); }
+            if (collide(board, currentPiece)) { rotate(currentPiece.matrix); rotate(currentPiece.matrix); rotate(currentPiece.matrix); }
         }
     });
 
-    let tX = 0, tY = 0;
+    let lastTap = 0;
     canvas.addEventListener('touchstart', e => {
-        if(gameOver) { internalStart(); return; }
-        tX = e.touches[0].clientX; tY = e.touches[0].clientY;
-        rotate(currentPiece.matrix); if(collide(board, currentPiece)) { rotate(currentPiece.matrix); rotate(currentPiece.matrix); rotate(currentPiece.matrix); }
-    }, {passive: false});
+        if (gameOver) { internalStart(); return; }
+
+        let now = Date.now();
+        let timesince = now - lastTap;
+
+        // DOUBLE TAP LOGIC (Поворот только при быстром двойном нажатии)
+        if ((timesince < 500) && (timesince > 0)) {
+            rotate(currentPiece.matrix);
+            if (collide(board, currentPiece)) {
+                rotate(currentPiece.matrix); rotate(currentPiece.matrix); rotate(currentPiece.matrix);
+            }
+        }
+
+        lastTap = now;
+        tX = e.touches[0].clientX;
+        tY = e.touches[0].clientY;
+    }, { passive: false });
 
     canvas.addEventListener('touchmove', e => {
         if (isAnimating || gameOver || !currentPiece) return;
         e.preventDefault();
-        let dX = e.touches[0].clientX - tX, dY = e.touches[0].clientY - tY;
-        if (Math.abs(dX) > 30) { currentPiece.pos.x += dX > 0 ? 1 : -1; if(collide(board, currentPiece)) currentPiece.pos.x -= dX > 0 ? 1 : -1; tX = e.touches[0].clientX; }
-        else if (dY > 40) { playerDrop(); tY = e.touches[0].clientY; }
-    }, {passive: false});
+
+        let dX = e.touches[0].clientX - tX;
+        let dY = e.touches[0].clientY - tY;
+
+        // Горизонтальный сдвиг
+        if (Math.abs(dX) > 25) {
+            currentPiece.pos.x += dX > 0 ? 1 : -1;
+            if (collide(board, currentPiece)) currentPiece.pos.x -= dX > 0 ? 1 : -1;
+            tX = e.touches[0].clientX;
+        }
+        // Свайп вниз (ускорение)
+        else if (dY > 35) {
+            playerDrop();
+            tY = e.touches[0].clientY;
+        }
+    }, { passive: false });
 
     function internalStart() {
-        if(gameLoop) cancelAnimationFrame(gameLoop);
+        if (gameLoop) cancelAnimationFrame(gameLoop);
         resetBoard(); score = 0; lines = 0; currentSpeed = 500; gameOver = false;
-        updateScore(); nextPiece = createPiece(); playerReset(); 
+        updateScore(); nextPiece = createPiece(); playerReset();
         lastTime = performance.now(); update();
     }
 
     document.addEventListener('start-tetris-internal', internalStart);
-    document.addEventListener('stop-tetris-internal', () => { if(gameLoop) cancelAnimationFrame(gameLoop); });
+    document.addEventListener('stop-tetris-internal', () => { if (gameLoop) cancelAnimationFrame(gameLoop); });
 });

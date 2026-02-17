@@ -142,7 +142,7 @@ canvas {
     color: rgba(255, 255, 255, 0.4);
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-right: auto;
+    margin-right: 75px;
     margin-left: 15px;
 }
 

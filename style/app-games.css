@@ -57,12 +57,18 @@
 
 .game-header {
     display: flex;
-    justify-content: flex-end; /* Выталкивает крестик вправо */
-    padding: 10px;
+    justify-content: space-between; /* Выталкивает крестик вправо */
+    align-items: center;
+    padding: -5px 10px; /* Меньше высоты в шапке */
     width: 100%;
 }
 
+.game-title {
+    color: #4B0082;
+}
+
 .close-btn {
+    color: #ffffff3b;
     background: none;
     border: none;
     font-size: 50px;

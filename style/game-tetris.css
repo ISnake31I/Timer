@@ -1,6 +1,17 @@
 /* style/game-tetris.css */
 
+#tetrisOverlay {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    /* Запрещает меню "Скопировать" */
+}
+
 .tetris-window {
+    margin-top: -10px;
+    /* Поднимаем выше */
+    transform: scale(0.9);
+    /* Легкий зум-аут для идеальной посадки на iPhone */
     background: #000;
     border: 1px solid rgba(128, 0, 0, 0.4);
     box-shadow: 0 0 30px rgba(75, 0, 130, 0.2);
@@ -11,6 +22,7 @@
 }
 
 #tetrisCanvas {
+    touch-action: none;
     background: #000;
     display: block;
     margin: 0 auto;
@@ -34,8 +46,10 @@
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
 }
 
-#tetrisCanvas, #nextCanvas {
-    touch-action: none; /* Убивает системные жесты, оставляя только наши */
+#tetrisCanvas,
+#nextCanvas {
+    touch-action: none;
+    /* Убивает системные жесты, оставляя только наши */
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
