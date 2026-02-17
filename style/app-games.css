@@ -52,3 +52,26 @@
     pointer-events: none;
     /* Нельзя нажать */
 }
+
+/* =========НАСТРОЙКА ХЕДЕРА И КРЕСТИКА У ИГР=============*/
+
+.game-header {
+    display: flex;
+    justify-content: flex-end; /* Выталкивает крестик вправо */
+    padding: 10px;
+    width: 100%;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 50px;
+    cursor: pointer;
+    line-height: 1;
+    transition: transform 0.3s ease;
+}
+
+.close-btn:hover {
+    transform: scale(1.2);
+    color: #4B0082; /* Фиолетовый отблеск при наведении */
+}

@@ -75,24 +75,6 @@
     box-shadow: 0 0 30px rgba(128, 0, 0, 0.5);
 }
 
-.game-header {
-    background: #242424;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #4B0082;
-    /* Твой Фиолет */
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 2rem;
-    cursor: pointer;
-}
-
 .game-score-board {
     display: flex;
     justify-content: space-between;
