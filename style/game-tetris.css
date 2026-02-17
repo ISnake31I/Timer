@@ -53,3 +53,9 @@
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
+
+#tetrisCanvas {
+    touch-action: none; /* Убирает системный зум и панорамирование */
+    -webkit-user-select: none; /* Запрещает выделение */
+    -webkit-touch-callout: none; /* Запрещает контекстное меню */
+}
