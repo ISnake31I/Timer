@@ -21,11 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Генерируем строго внутри видимой области
         const x = Math.random() * (window.innerWidth - mSize - 20) + 10;
         const y = Math.random() * (window.innerHeight - mSize - 20) + 10;
-        
+
         mimiElement.style.transition = "none";
         mimiElement.style.left = `${x}px`;
         mimiElement.style.top = `${y}px`;
-        
+
         setTimeout(() => {
             mimiElement.style.transition = "all 0.8s cubic-bezier(0.5, 1.5, 0.6, 1)";
         }, 100);
@@ -197,4 +197,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     setInterval(checkDoctorOrders, 10000);
+
+    // --- ФИКС ДЛЯ ТЕЛЕФОНА (ГЕЛИ-ПРОТОКОЛ) ---
+    window.addEventListener('resize', () => {
+        // Если при смене ориентации Мими потерялся - возвращаем его в центр
+        if (isOutOfBounds(parseFloat(mimiElement.style.left), parseFloat(mimiElement.style.top))) {
+            setRandomStart();
+            console.log("Мими: Ого, мир изменился! Я вернулся! 🧭");
+        }
+    });
+
+    // Умное облачко (добавь проверку в mimiSay)
+    function mimiSay(text, duration = 3000) {
+        if (!mimiMessage) return;
+        const currentY = parseFloat(mimiElement.style.top);
+
+        // Если Мими высоко (меньше 150px от верха) - облачко падает ВНИЗ
+        if (currentY < 150) {
+            mimiMessage.style.bottom = "-50px";
+        } else {
+            mimiMessage.style.bottom = "80px";
+        }
+
+        mimiMessage.innerText = text;
+        mimiElement.classList.add('speaking');
+        setTimeout(() => mimiElement.classList.remove('speaking'), duration);
+    }
 });
