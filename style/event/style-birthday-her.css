@@ -1,0 +1,29 @@
+/* ТЕМА: 28 ФЕВРАЛЯ (ЖИДКОЕ ЗОЛОТО + БОРДО) */
+body.theme-birthday-her, .theme-birthday-her {
+    background: radial-gradient(circle at center, #4A0404 0%, #1a0000 100%) !important;
+    transition: all 1.5s ease-in-out;
+}
+
+.theme-birthday-her .timer__item,
+.theme-birthday-her .placeholder__text {
+    background-image: linear-gradient(90deg, #FFD700, #FFF5B7, #FFD700, #B8860B, #FFD700) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-size: 200% auto !important;
+    display: inline-block;
+    animation: gradient-move 5s linear infinite !important;
+}
+
+/* Свечение на обертку */
+.theme-birthday-her .timer, .theme-birthday-her .placeholder {
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4)) !important;
+}
+
+/* Падающие смайлы на ДР */
+.theme-birthday-her .heart {
+    position: fixed; top: -50px; font-size: 24px; z-index: 9999;
+    user-select: none; pointer-events: none;
+    animation: fall linear forwards;
+}
+@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+@keyframes gradient-move { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }

@@ -1,7 +1,11 @@
 @import "./reset.css";
 @import "./fonts.css";
 @import "./lock-secure.css";
+/* Стили на праздники */
 @import "./event/style-valentine-day.css";
+@import "./event/style-birthday-her.css";
+@import "./event/style-march8.css";
+/* =========== */
 @import "./style-lock-timer.css";
 @import "./style-timer.css";
 @import "./progress-bar.css";

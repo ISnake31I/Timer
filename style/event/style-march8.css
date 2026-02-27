@@ -1,0 +1,13 @@
+/* ТЕМА: 8 МАРТА (РОЗОВЫЙ НЕОН) */
+.theme-march8 .timer__item {
+    background-image: linear-gradient(90deg, #ff0080, #ff8c00, #ff0080) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-size: 200% auto !important;
+    display: inline-block;
+    animation: gradient-move 5s linear infinite !important;
+}
+.theme-march8 .timer__divider {
+    background: linear-gradient(to bottom, #ff0080, #ff8c00, #ff0080);
+}
+@keyframes gradient-move { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
