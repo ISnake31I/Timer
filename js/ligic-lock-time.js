@@ -1,5 +1,5 @@
 (function() {
-    const unlockDate = new Date("2026-01-20T00:00:00").getTime();
+    const unlockDate = new Date("2026-05-20T00:00:00").getTime();
     const now = new Date().getTime();
     const isLocked = now < unlockDate;
 

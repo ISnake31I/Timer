@@ -1,31 +1,73 @@
 // --- ANGEL OS: MIMI ULTIMATE MOTION ---
 
+// ВАЖНО: Выносим угол наружу, чтобы его видел глобальный mimiSay
+let currentRotation = 0; 
+
 document.addEventListener('DOMContentLoaded', () => {
     const mimiElement = document.getElementById('mimi-box');
     const mimiFrame = mimiElement.querySelector('.mimi-frame');
     const mimiEyes = mimiElement.querySelector('.mimi-eyes');
-    let currentRotation = 0;
-    let mimiIdleTime = 0;
     const mimiMessage = document.getElementById('mimiMessage');
+    let mimiIdleTime = 0;
 
-    function mimiSay(text, duration = 3000) {
-        if (!mimiMessage) return;
+    // --- ГЛОБАЛЬНЫЙ МОСТ: Теперь облачко будет умным везде! ---
+    window.mimiSay = function(text) {
+        if (!mimiMessage || !mimiElement) return;
+
+        // 1. Твой УМНЫЙ ТАЙМЕР (Символы * 125мс)
+        const calculatedDuration = Math.min(Math.max(4000, text.length * 125), 17500);
+
         mimiMessage.innerText = text;
         mimiElement.classList.add('speaking');
-        setTimeout(() => mimiElement.classList.remove('speaking'), duration);
-    }
 
-    // --- 1. РАНДОМНЫЙ СТАРТ (Жизнь вне системы) ---
+        // 2. Твоя ИДЕАЛЬНАЯ ЛОГИКА ПОЗИЦИИ (adjustBubble)
+        const adjustBubble = () => {
+            if (!mimiElement.classList.contains('speaking')) return;
+
+            const rect = mimiElement.getBoundingClientRect();
+            const msgRect = mimiMessage.getBoundingClientRect();
+            const screenW = window.innerWidth;
+
+            // Вертикаль
+            if (rect.top < 150) {
+                mimiMessage.style.bottom = "auto";
+                mimiMessage.style.top = "70px";
+            } else {
+                mimiMessage.style.bottom = "80px";
+                mimiMessage.style.top = "auto";
+            }
+
+            // Горизонталь (Центровка + Края)
+            let desiredLeft = rect.left + (rect.width / 2) - (msgRect.width / 2);
+            if (desiredLeft < 10) desiredLeft = 10;
+            if (desiredLeft + msgRect.width > screenW - 10) {
+                desiredLeft = screenW - msgRect.width - 10;
+            }
+
+            mimiMessage.style.left = `${desiredLeft - rect.left}px`;
+            
+            // СОПРОТИВЛЕНИЕ ВРАЩЕНИЮ (Берет внешнюю currentRotation)
+            mimiMessage.style.transform = `rotate(${-currentRotation}deg)`;
+
+            requestAnimationFrame(adjustBubble);
+        };
+
+        requestAnimationFrame(adjustBubble);
+
+        // Уборка текста по таймеру
+        setTimeout(() => {
+            mimiElement.classList.remove('speaking');
+        }, calculatedDuration);
+    };
+
+    // --- 1. РАНДОМНЫЙ СТАРТ ---
     function setRandomStart() {
         const mSize = 70;
-        // Генерируем строго внутри видимой области
         const x = Math.random() * (window.innerWidth - mSize - 20) + 10;
         const y = Math.random() * (window.innerHeight - mSize - 20) + 10;
-
         mimiElement.style.transition = "none";
         mimiElement.style.left = `${x}px`;
         mimiElement.style.top = `${y}px`;
-
         setTimeout(() => {
             mimiElement.style.transition = "all 0.8s cubic-bezier(0.5, 1.5, 0.6, 1)";
         }, 100);
@@ -165,32 +207,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // 2. Рандомные фразы
     setInterval(() => {
         // Если Мими не обижен и экран разблокирован
-        if (!isOffended && document.getElementById('main-content').style.opacity === "1") {
+        const mainContent = document.getElementById('main-content');
+        if (!isOffended && mainContent && mainContent.style.opacity === "1") {
             const phrases = [
                 "Интересно, а они оба выспались?🤔",
                 "Качусь по своим делам...🎲",
                 "Артём просил тебе передать что ты очень красивая🥰",
                 "Тут уютно!💜",
                 "Мими на связи!📡",
-                "Погода в Шелехове сегодня... кодовая! 💻"
+                "Геля, а ты сегодня уже улыбалась? Это важно!🩺✨",
+                "Я тут посчитал... вероятность твоего успеха сегодня 100%!📈"
             ];
-
-            // Шанс 10%, что он что-то скажет в этот цикл
+            
             if (Math.random() > 0.9) {
                 const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-                mimiSay(randomPhrase);
+                // Вызываем ГЛОБАЛЬНУЮ функцию, которую мы объявили в 1-й части
+                window.mimiSay(randomPhrase); 
             }
         }
-    }, 30000); // Проверка каждые 30 секунд
+    }, 30000); 
 
     function checkDoctorOrders() {
         const hour = new Date().getHours();
         if (hour >= 23 || hour < 6) {
-            isOffended = true;
-            mimiElement.classList.add('offended');
-            mimiSay("ГЕЛЯ ВЕЛЕЛА СПАТЬ!😠");
+            if (!isOffended) {
+                isOffended = true;
+                mimiElement.classList.add('offended');
+                window.mimiSay("ГЕЛЯ ВЕЛЕЛА СПАТЬ!😠");
+            }
         } else if (clickCount < 3) {
             isOffended = false;
             mimiElement.classList.remove('offended');
@@ -198,29 +245,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setInterval(checkDoctorOrders, 10000);
 
-    // --- ФИКС ДЛЯ ТЕЛЕФОНА (ГЕЛИ-ПРОТОКОЛ) ---
+    // --- ФИКС ДЛЯ ТЕЛЕФОНА ---
     window.addEventListener('resize', () => {
-        // Если при смене ориентации Мими потерялся - возвращаем его в центр
-        if (isOutOfBounds(parseFloat(mimiElement.style.left), parseFloat(mimiElement.style.top))) {
+        const currentX = parseFloat(mimiElement.style.left);
+        const currentY = parseFloat(mimiElement.style.top);
+        if (isOutOfBounds(currentX, currentY)) {
             setRandomStart();
             console.log("Мими: Ого, мир изменился! Я вернулся! 🧭");
         }
     });
-
-    // Умное облачко (добавь проверку в mimiSay)
-    function mimiSay(text, duration = 3000) {
-        if (!mimiMessage) return;
-        const currentY = parseFloat(mimiElement.style.top);
-
-        // Если Мими высоко (меньше 150px от верха) - облачко падает ВНИЗ
-        if (currentY < 150) {
-            mimiMessage.style.bottom = "-50px";
-        } else {
-            mimiMessage.style.bottom = "80px";
-        }
-
-        mimiMessage.innerText = text;
-        mimiElement.classList.add('speaking');
-        setTimeout(() => mimiElement.classList.remove('speaking'), duration);
-    }
-});
+}); // Конец DOMContentLoaded

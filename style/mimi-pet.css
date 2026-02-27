@@ -44,15 +44,11 @@
     transition: all 0.2s ease;
 }
 
-/* ОБЛАЧКО (СТАБИЛИЗАЦИЯ И ПОЗИЦИЯ) */
+/* ОБЛАЧКО (ДЕКОР И ПЕРЕХОДЫ) */
 .mimi-bubble {
     position: absolute;
-    bottom: 35px; /* Высота над глазами */
-    left: 50%;
-    transform: translateX(-50%); /* Только центровка */
-    /* УДАЛИ ОТСЮДА transition: transform! */
-    transition: opacity 0.3s ease; 
-    
+    /* Убираем жесткую привязку к bottom и left */
+    display: inline-block;
     background: rgba(128, 0, 32, 0.95); 
     color: #fff;
     padding: 6px 12px;
@@ -62,6 +58,9 @@
     opacity: 0;
     pointer-events: none;
     z-index: 2000;
+    /* Только плавность появления */
+    transition: opacity 0.3s ease, bottom 0.3s ease, left 0.3s ease, right 0.3s ease;
+    transform: rotate(0deg) !important; /* Запрещаем наследовать вращение */
 }
 
 /* ПОКАЗЫВАЕМ ОБЛАЧКО */
@@ -88,6 +87,8 @@
     100% { box-shadow: 0 0 10px #ff4d4d; }
 }
 .offended { animation: mimiAnger 1s infinite alternate !important; }
+
+/* =============================== */
 
 @media (max-width: 480px) {
     #mimi-box {

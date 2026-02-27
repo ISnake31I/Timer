@@ -1,0 +1,301 @@
+/* =============Кастом шапочки=============== */
+
+/* ПРАЗДНИЧНЫЙ КОНУС (Birthday Cone) */
+.mimi-birthday-cap {
+    display: block;
+    /* Всегда блок, но скрываем через opacity */
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    /* Начальное положение: чуть выше и прозрачно */
+    transform: translateX(-50%) translateY(-60px) rotate(0deg);
+
+    width: 0;
+    height: 0;
+    border-left: 18px solid transparent;
+    border-right: 18px solid transparent;
+    border-bottom: 40px solid #800020;
+    z-index: 100;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+
+    /* ПЛАВНЫЙ ВХОД (Когда добавится класс) */
+    transition: transform 0.8s cubic-bezier(0.5, 1.5, 0.6, 1), opacity 0.5s ease;
+}
+
+/* ЗОЛОТАЯ КАЕМКА (Снизу конуса) */
+.mimi-birthday-cap::before {
+    content: '';
+    position: absolute;
+    bottom: -40px;
+    /* Прижимаем к низу треугольника */
+    left: -18px;
+    width: 36px;
+    height: 4px;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    /* ЗОЛОТО */
+    border-radius: 2px;
+}
+
+/* ЯРКИЙ ПОМПОН (Сверху) */
+.mimi-birthday-cap::after {
+    content: '⭐';
+    /* Золотая звезда вместо помпона! */
+    position: absolute;
+    top: 5px;
+    /* Корректируем под вершину треугольника */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    filter: drop-shadow(0 0 3px gold);
+}
+
+/* АНИМАЦИЯ ПРАЗДНИКА (Включается при активации) */
+#mimi-box.party-mode .mimi-birthday-cap {
+    opacity: 1;
+    /* Сначала спускается, потом начинает танцевать через delay */
+    transform: translateX(-50%) translateY(5px);
+    animation: capDance 1.2s infinite ease-in-out 0.8s;
+    /* 0.8s — задержка перед танцем */
+}
+
+@keyframes capDance {
+    0% {
+        transform: translateX(-50%) translateY(5px) rotate(-3deg);
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(0px) rotate(3deg);
+    }
+
+    100% {
+        transform: translateX(-50%) translateY(5px) rotate(-3deg);
+    }
+}
+
+/* ========================== */
+
+/* ВАРИАНТ №1: ЗОЛОТАЯ КОРОНА */
+.mimi-birthday-cap.crown {
+    display: none;
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* СБРОС НАСЛЕДОВАНИЯ ОТ КОНУСА */
+    width: 44px !important;
+    height: 25px !important;
+    border: none !important;
+    opacity: 1 !important;
+
+    background: linear-gradient(0deg, #FFD700 0%, #FFA500 100%);
+    clip-path: polygon(0% 100%, 0% 0%, 25% 40%, 50% 0%, 75% 40%, 100% 0%, 100% 100%);
+    z-index: 100;
+}
+
+/* ВКЛЮЧЕНИЕ ПРИ KING-MODE */
+#mimi-box.king-mode .mimi-birthday-cap.crown {
+    display: block;
+    animation: crownGlow 1.5s infinite alternate ease-in-out;
+}
+
+/* АНИМАЦИЯ: Легкое сияние и покачивание */
+@keyframes crownGlow {
+    0% {
+        transform: translateX(-50%) scale(1) rotate(-2deg);
+        filter: drop-shadow(0 0 5px gold);
+    }
+
+    100% {
+        transform: translateX(-50%) scale(1.05) rotate(2deg);
+        filter: drop-shadow(0 0 12px #FFD700);
+    }
+}
+
+/* ========================== */
+
+/* ВАРИАНТ №2: БОРДОВЫЙ ЦИЛИНДР С ЗОЛОТОМ */
+.mimi-birthday-cap.hat {
+    display: none;
+    position: absolute;
+    top: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 32px !important;
+    height: 30px !important;
+    border: none !important;
+    opacity: 1 !important;
+    background: #4A0404;
+    border-radius: 4px 4px 0 0;
+    z-index: 100;
+
+    /* ЛЕНТА: Рисуем её через внутреннюю тень снизу! Железобетонно. */
+    box-shadow: inset 0 -6px 0 0 #ffd900bb, 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* ПОЛЯ ШЛЯПЫ (Нижняя часть) */
+.mimi-birthday-cap.hat::before {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    /* Подогнали под отсутствие бордера */
+    left: -10px;
+    width: 52px;
+    height: 6px;
+    background: #4A0404;
+    border-radius: 10px;
+}
+
+/* БЛИК НА ШЛЯПЕ (Теперь он единственный законный ::after) */
+.mimi-birthday-cap.hat::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 6px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}
+
+/* АКТИВАЦИЯ В PARTY MODE */
+#mimi-box.party-mode .mimi-birthday-cap.hat {
+    display: block;
+    animation: hatGentle 2s infinite ease-in-out;
+}
+
+/* АНИМАЦИЯ: Вежливое покачивание (как поклон) */
+@keyframes hatGentle {
+    0% {
+        transform: translateX(-50%) rotate(-5deg);
+    }
+
+    50% {
+        transform: translateX(-50%) rotate(5deg) translateY(-3px);
+    }
+
+    100% {
+        transform: translateX(-50%) rotate(-5deg);
+    }
+}
+
+/* =============================== */
+
+/* LOVE RADAR: Тюнинг углов */
+.mimi-love-radar {
+    display: none;
+    position: absolute;
+    top: -55px;
+    left: 50%;
+    width: 90px;
+    /* Еще шире для разлета */
+    margin-left: -45px;
+    height: 45px;
+    z-index: 100;
+}
+
+/* ВОЗВРАЩАЕМ АРКУ */
+.radar-arch {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 12.5px;
+    border: 3.5px solid #900024;
+    /* Тонкий темный бордо */
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+    opacity: 0.5;
+}
+
+/* АНТЕННЫ НАИСКОСОК */
+.antenna {
+    position: absolute;
+    bottom: 7px;
+    /* Крепятся к краям арки */
+    width: 1.5px;
+    height: 15px;
+    background: #af002c;
+    transform-origin: bottom center;
+}
+
+/* УГОЛ НАКЛОНА: Левая влево, правая вправо */
+.antenna.left {
+    left: 30px;
+    transform: rotate(-25deg);
+}
+
+.antenna.right {
+    right: 30px;
+    transform: rotate(25deg);
+}
+
+/* МИНИ-СЕРДЕЧКИ (Уменьшили размер) */
+.heart-custom {
+    position: absolute;
+    top: -8px;
+    left: -5px;
+    width: 10px;
+    /* БЫЛО 16, СТАЛО 10 */
+    height: 10px;
+    background: #600018;
+    transform: rotate(-45deg);
+}
+
+.heart-custom::before,
+.heart-custom::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: #600018;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.heart-custom::before {
+    top: -5px;
+    left: 0;
+}
+
+.heart-custom::after {
+    left: 5px;
+    top: 0;
+}
+
+/* АНИМАЦИЯ: Тряска с учетом наклона */
+#mimi-box.party-mode .antenna.left {
+    animation: wobbleLeft 0.5s infinite ease-in-out alternate;
+}
+
+#mimi-box.party-mode .antenna.right {
+    animation: wobbleRight 0.5s infinite ease-in-out alternate;
+    animation-delay: 0.1s;
+}
+
+@keyframes wobbleLeft {
+    0% {
+        transform: rotate(-35deg);
+    }
+
+    100% {
+        transform: rotate(-15deg);
+    }
+}
+
+@keyframes wobbleRight {
+    0% {
+        transform: rotate(15deg);
+    }
+
+    100% {
+        transform: rotate(35deg);
+    }
+}
+
+#mimi-box.party-mode .mimi-love-radar {
+    display: block;
+}

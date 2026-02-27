@@ -25,9 +25,8 @@
     <main id="main-content" style="opacity: 0; transition: opacity 0.8s ease;">
         <!-- ТА САМАЯ ЗАГЛУШКА ДЛЯ 3-ГО КОНВЕРТА -->
         <div class="timer__placeholder" style="display: none;">
-            <h1 class="placeholder__text">Упс... Кажется, тут что-то должно быть, но видимо оно появится<br>на 5-ом
-                конверте
-                :)
+            <h1 class="placeholder__text">Кажется мими нравятся его новые шапочки :)
+                <br> И вернуться к его прошлой версии было верным решением)
             </h1>
             <div class="system-loading">
                 <div class="progress-wrapper">
@@ -49,7 +48,7 @@
             </div>
         </div>
 
-        <div class="app-grid" id="appGrid">
+        <!-- <div class="app-grid" id="appGrid">
             <div class="app-item" id="snakeGameBtn">
                 <div class="app-icon snake-icon">🐍</div>
                 <span>Snake</span>
@@ -58,14 +57,30 @@
                 <div class="app-icon tetris-icon">🧱</div>
                 <span>Tetris</span>
             </div>
-        </div>
+        </div> -->
 
         <!-- РОЖДЕНИЕ МИМИ -->
         <div id="mimi-box" class="mimi-cube-container">
             <div class="mimi-frame">
                 <div class="mimi-display">
-                    <!-- Здесь будут глаза как у Сбера -->
                     <div class="mimi-eyes">
+                        <!-- ВЕСЬ ГАРДЕРОБ ЗДЕСЬ -->
+                        <div class="mimi-birthday-cap"></div> <!-- Конус -->
+
+                        <div class="mimi-birthday-cap crown"></div> <!-- Корона -->
+
+                        <div class="mimi-birthday-cap hat"></div> <!-- Цилиндр -->
+
+                        <div class="mimi-love-radar"> <!-- Любовные антенки -->
+                            <div class="antenna left">
+                                <div class="heart-custom"></div>
+                            </div>
+                            <div class="antenna right">
+                                <div class="heart-custom"></div>
+                            </div>
+                            <div class="radar-arch"></div>
+                        </div>
+                        <!-- ========================= -->
                         <div id="mimiMessage" class="mimi-bubble"></div>
                         <div class="eye left"></div>
                         <div class="eye right"></div>
@@ -160,8 +175,10 @@
     <!-- 7.2 Тетрис -->
     <script src="./js/game-tetris.js"></script>
 
-    <!-- 8. Проэкт по имени ИМО -->
+    <!-- 8. Проэкт по имени Мими -->
     <script src="./mimi.js"></script>
+    <!-- 8.1 Праздничные кастомы Мими -->
+    <script src="./js/logic-custom-mimi.js"></script>
 </body>
 
 </html>
