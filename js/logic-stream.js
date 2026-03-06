@@ -1,38 +1,22 @@
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Stream Mode Initiated... 📡");
+// logic-stream.js — МОДУЛЬ УПРАВЛЕНИЯ МИМИ НА СТРИМЕ (Hotkeys)
+document.addEventListener('keydown', (event) => {
+    // Находим облако текста Мими по твоему классу или ID
+    const mimiText = document.querySelector('.mimi-bubble'); 
+    
+    // F8 — ТЫ КРАСАВА (Килл, победа, крутой мув)
+    if (event.key === 'F8') {
+        mimiText.innerText = 'Ангелок, видела как Артём размотал?! 😎';
+        mimiText.style.color = '#FFD700'; // Золотой цвет для победы
+        setTimeout(() => { mimiText.innerText = 'Геля, я всё вижу! 👀'; mimiText.style.color = ''; }, 5000);
+    } 
 
-    setTimeout(() => {
-        const mimiBox = document.getElementById('mimi-box');
-        const mimiBubble = document.querySelector('.mimi-bubble');
-
-        if (mimiBox) {
-            document.body.classList.add('stream-mode');
-            // Принудительно показываем кубик, если он был спрятан логикой сайта
-            mimiBox.style.display = 'block';
-            mimiBox.style.opacity = '1';
-            mimiBox.style.visibility = 'visible';
-        }
-
-        const streamPhrases = [
-            "Ангелок, смотри как Артём тащит! 😎",
-            "Геля, я всё вижу! 👀",
-            "Кремень в здании! 🦁",
-            "Смотри-смотри, сейчас будет мув! 🔥",
-            "Ангелочек, ты самая лучшая! 👸",
-            "Артём, не отвлекайся на бабуинов! 🐒",
-            "Мими одобряет этот каток! ✅",
-            "Геля, а ты знала, что Артём — лучший? 🎮"
-        ];
-
-        function launchMimiTalk() {
-            if (mimiBubble) {
-                mimiBubble.innerText = streamPhrases[Math.floor(Math.random() * streamPhrases.length)];
-                console.log("Mimi said: " + mimiBubble.innerText);
-            }
-            const nextTime = Math.floor(Math.random() * (300000 - 180000) + 180000);
-            setTimeout(launchMimiTalk, nextTime);
-        }
-
-        launchMimiTalk();
-    }, 3000); 
+    // F9 — ТЫ "ЗАЛАГАЛ" (Смерть, тупняк, бабуины подвели)
+    if (event.key === 'F9') {
+        mimiText.innerText = 'Геля, не смотри! Кремень просто залагал! 😵';
+        mimiText.style.color = '#ff4d4d'; // Красный для фейла
+        setTimeout(() => { mimiText.innerText = 'Геля, я всё вижу! 👀'; mimiText.style.color = ''; }, 5000);
+    }
 });
+
+// Добавляем класс для OBS, чтобы скрыть всё лишнее
+document.body.classList.add('stream-mode');
