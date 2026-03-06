@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 1. ОПРЕДЕЛЯЕМ ТЕМУ
         let themeToSet = null;
-        if (month === 2 && day === 14) themeToSet = 'theme-valentines';
+        if (month === 3 && day === 14) themeToSet = 'theme-valentines';
         else if (month === 2 && day === 28) themeToSet = 'theme-birthday-her';
         else if (month === 3) themeToSet = 'theme-diploma';
 

@@ -1,6 +1,8 @@
 @import "./reset.css";
 @import "./fonts.css";
 @import "./lock-secure.css";
+/* Стьили специально для стрима */
+@import "./style-stream.css";
 /* Стили на праздники */
 @import "./event/style-valentine-day.css";
 @import "./event/style-birthday-her.css";

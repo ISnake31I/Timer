@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isOffended) {
                 isOffended = true;
                 mimiElement.classList.add('offended');
-                window.mimiSay("ГЕЛЯ ВЕЛЕЛА СПАТЬ!😠");
+                window.mimiSay("ГЕЛЯ ИДИ СПАТЬ!😠");
             }
         } else if (clickCount < 3) {
             isOffended = false;
