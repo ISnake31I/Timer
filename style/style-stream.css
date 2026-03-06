@@ -9,8 +9,3 @@
     display: none !important; /* Прячем всё лишнее, оставляем только Мими */
 }
 
-/* Увеличиваем Мими для стрима, если нужно */
-.stream-mode #mimi-box {
-    transform: scale(1.5); 
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); /* Золотое свечение Ангелочка */
-}

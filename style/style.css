@@ -1,8 +1,6 @@
 @import "./reset.css";
 @import "./fonts.css";
 @import "./lock-secure.css";
-/* Стьили специально для стрима */
-@import "./style-stream.css";
 /* Стили на праздники */
 @import "./event/style-valentine-day.css";
 @import "./event/style-birthday-her.css";
@@ -13,6 +11,8 @@
 @import "./progress-bar.css";
 @import "./mimi-pet.css";
 @import "./mimi-wardbrobe.css";
+/* Стьили специально для стрима */
+@import "./style-stream.css";
 
 @import "./app-games.css";
 @import "./game-snake.css";
@@ -72,12 +72,28 @@ body {
     /* Чтобы не мешал нажимать на кнопки после исчезновения */
 }
 
-/* Блокируем системный отскок и обновление на всем сайте */
-html, body {
-    position: fixed;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    overscroll-behavior-y: none !important; /* Убивает Pull-to-Refresh */
-    -webkit-overflow-scrolling: touch;
+/* РЕЖИМ СТРИМА: ТОЧЕЧНОЕ ОТКЛЮЧЕНИЕ ЛИШНЕГО */
+body.stream-mode {
+    background: transparent !important;
+}
+
+/* Скрываем только основные крупные блоки сайта */
+body.stream-mode header,
+body.stream-mode footer,
+body.stream-mode .timer,
+body.stream-mode .placeholder,
+body.stream-mode .controls,
+body.stream-mode .background-overlay {
+    display: none !important;
+}
+
+/* Убеждаемся, что Мими виден и стоит в углу */
+body.stream-mode #mimi-box {
+    display: block !important;
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 99999 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
