@@ -107,3 +107,34 @@ body.stream-mode .mimi-bubble {
     white-space: nowrap;
     pointer-events: none;
 }
+
+/* РАЗРЕШАЕМ ГЛАЗАМ ПОКАЗЫВАТЬ ШЛЯПУ СНАРУЖИ */
+.mimi-eyes {
+    overflow: visible !important; /* ГЛАВНЫЙ ФИКС */
+}
+
+/* ФИКСИРУЕМ ШЛЯПУ ИНЖЕНЕРА */
+.mimi-birthday-cap.engineer-hat {
+    display: none; /* JS ВКЛЮЧИТ */
+    position: absolute !important;
+    width: 60px !important;
+    height: 25px !important;
+    top: -45px !important; /* ВЫНОСИМ НА КРЫШУ КУБА */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: linear-gradient(to bottom, #5d9948 45%, #795548 45%) !important;
+    border: 2px solid #3d2b24 !important;
+    border-radius: 4px;
+    z-index: 9999 !important;
+}
+
+/* ГАЕЧНЫЙ КЛЮЧ */
+.mimi-birthday-cap.engineer-hat::after {
+    content: '🔧' !important;
+    position: absolute;
+    right: -35px;
+    top: 5px;
+    font-size: 28px;
+    transform: rotate(45deg);
+    animation: wrench-move 2s infinite ease-in-out;
+}
