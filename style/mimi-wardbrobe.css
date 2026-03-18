@@ -299,3 +299,30 @@
 #mimi-box.party-mode .mimi-love-radar {
     display: block;
 }
+
+.mimi-birthday-cap .engineer-hat {
+        width: 70px;
+    height: 30px;
+    background: linear-gradient(to bottom, #5d9948 45%, #795548 45%); /* Трава + Земля */
+    border: 3px solid #3d2b24;
+    border-radius: 4px;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: inset -4px -4px 0 rgba(0,0,0,0.2);
+}
+.mimi-birthday-cap .engineer-hat::after {
+        content: '🔧';
+    position: absolute;
+    right: -40px;
+    top: 20px;
+    font-size: 35px;
+    transform: rotate(45deg);
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4));
+    animation: wrench-work 2s infinite ease-in-out;
+}
+
+@keyframes wrench-work {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50% { transform: rotate(65deg) translateY(-5px); }
+}
