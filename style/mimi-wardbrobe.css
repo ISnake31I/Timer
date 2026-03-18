@@ -300,29 +300,29 @@
     display: block;
 }
 
-.mimi-birthday-cap .engineer-hat {
-        width: 70px;
-    height: 30px;
-    background: linear-gradient(to bottom, #5d9948 45%, #795548 45%); /* Трава + Земля */
-    border: 3px solid #3d2b24;
-    border-radius: 4px;
-    top: -28px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: inset -4px -4px 0 rgba(0,0,0,0.2);
-}
-.mimi-birthday-cap .engineer-hat::after {
-        content: '🔧';
-    position: absolute;
-    right: -40px;
-    top: 20px;
-    font-size: 35px;
-    transform: rotate(45deg);
-    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4));
-    animation: wrench-work 2s infinite ease-in-out;
+/* ВЫТАЛАКИВАЕМ ШЛЯПУ ИЗ ГЛАЗ НА КРЫШУ КУБА */
+.mimi-eyes {
+    overflow: visible !important; /* ЧТОБЫ ШЛЯПУ БЫЛО ВИДНО */
 }
 
-@keyframes wrench-work {
-    0%, 100% { transform: rotate(45deg) translateY(0); }
-    50% { transform: rotate(65deg) translateY(-5px); }
+.mimi-birthday-cap.engineer-hat {
+    position: absolute !important;
+    width: 80px !important;
+    height: 35px !important;
+    top: -65px !important; /* ЖЕСТКО ВЫНОСИМ НАВЕРХ */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: linear-gradient(to bottom, #5d9948 45%, #795548 45%) !important;
+    border: 3px solid #3d2b24 !important;
+    border-radius: 4px;
+    z-index: 1000;
+}
+
+.mimi-birthday-cap.engineer-hat::after {
+    content: '🔧' !important;
+    position: absolute;
+    right: -45px;
+    top: 15px;
+    font-size: 35px;
+    transform: rotate(45deg);
 }

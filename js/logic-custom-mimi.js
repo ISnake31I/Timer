@@ -4,47 +4,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const month = new Date().getMonth() + 1;
 
     function setMimiWardrobe(mode) {
-        // 1. Находим элементы (пробуем разные варианты селекторов)
-        const cap = document.querySelector('.mimi-birthday-cap:not(.crown):not(.hat)');
-        const crown = document.querySelector('.mimi-birthday-cap.crown');
-        const hat = document.querySelector('.mimi-birthday-cap.hat');
-        const radar = document.querySelector('.mimi-love-radar');
+    // 1. Находим ВСЕ элементы (добавил инженера)
+    const cap = document.querySelector('.mimi-birthday-cap:not(.crown):not(.hat):not(.engineer-hat)');
+    const crown = document.querySelector('.mimi-birthday-cap.crown');
+    const hat = document.querySelector('.mimi-birthday-cap.hat');
+    const radar = document.querySelector('.mimi-love-radar');
+    const engineerHat = document.querySelector('.mimi-birthday-cap.engineer-hat'); // ВОТ ОН!
 
-        // Добавь в список поиска элементов:
-        const engineerHat = document.querySelector('.mimi-birthday-cap.engineer-hat');
+    // 2. ЖЕСТКИЙ СБРОС (Добавь engineerHat в массив)
+    [cap, crown, hat, radar, engineerHat].forEach(el => {
+        if (el) el.style.display = 'none';
+    });
 
-
-        // 2. ЖЕСТКИЙ СБРОС (Скрываем всё)
-        [cap, crown, hat, radar, engineerHat].forEach(el => {
-            if (el) {
-                el.style.display = 'none';
-                console.log("Скрываю элемент:", el.className); // ТЕСТ В КОНСОЛИ
-            }
-        });
-
-        // 3. ВКЛЮЧАЕМ НУЖНЫЙ (Проверь, чтобы эти классы были в HTML!)
-        if (mode === 'party-mode' && cap) cap.style.display = 'block';
-        if (mode === 'valentine-mode' && radar) radar.style.display = 'block';
-        if (mode === 'king-mode' && crown) {
-            crown.style.display = 'block';
-            console.log("Корона АКТИВИРОВАНА!");
-        }
-        if (mode === 'gentleman-mode' && hat) {
-            hat.style.display = 'block';
-            console.log("Цилиндр АКТИВИРОВАН!");
-        }
-
-        if (mode === 'engineer-mode' && engineerHat) {
-            engineerHat.style.display = 'block';
-            console.log("Mimi Engineer: Crafting started! ⚙️");
-        }
-
-        // 4. ОБНОВЛЯЕМ КЛАССЫ СИЯНИЯ
-        if (mimiBox) {
-            mimiBox.classList.remove('party-mode', 'valentine-mode', 'king-mode', 'gentleman-mode', 'engineer-mode');
-            if (mode) mimiBox.classList.add(mode);
-        }
+    // 3. ВКЛЮЧАЕМ НУЖНЫЙ
+    if (mode === 'party-mode' && cap) cap.style.display = 'block';
+    if (mode === 'valentine-mode' && radar) radar.style.display = 'block';
+    if (mode === 'king-mode' && crown) crown.style.display = 'block';
+    if (mode === 'gentleman-mode' && hat) hat.style.display = 'block';
+    
+    // ВКЛЮЧАЕМ ИНЖЕНЕРА
+    if (mode === 'engineer-mode' && engineerHat) {
+        engineerHat.style.display = 'block';
+        console.log("Mimi Engineer: Crafting started! ⚙️");
     }
+
+    // 4. ОБНОВЛЯЕМ КЛАССЫ СИЯНИЯ
+    if (mimiBox) {
+        mimiBox.classList.remove('party-mode', 'valentine-mode', 'king-mode', 'gentleman-mode', 'engineer-mode');
+        if (mode) mimiBox.classList.add(mode);
+    }
+}
 
     // --- ФУНКЦИЯ "ОБОРУДОВАНИЯ" ---
     function equipMimi(mode, firstMessage) {
