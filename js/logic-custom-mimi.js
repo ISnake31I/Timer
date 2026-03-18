@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (day === 6 && month === 3) {
         // equipMimi('party-mode', "ТЕСТ: КОНУС АКТИВИРОВАН! 🥳");
         // equipMimi('king-mode', "ТЕСТ: КОРОНА АКТИВИРОВАНА! 👑");
-        equipMimi('gentleman-mode', "");
+        // equipMimi('gentleman-mode', "ТЕСТ: ШЛЯПА АКТИВИРОВАНА");
         // equipMimi('valentine-mode', "ТЕСТ: РАДАР АКТИВИРОВАН! ❤️🛰️");
     } 
     
