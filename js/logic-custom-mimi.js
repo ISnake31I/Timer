@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- ДЕТОНАТОРЫ (Твой двигатель) ---
 
     // Бро, для ТЕСТА сегодня (27.02) оставь ОДНУ строку включенной:
-    if (day === 18 && month === 3) {
+    if (day === 19 && month === 3) {
         // equipMimi('party-mode', "ТЕСТ: КОНУС АКТИВИРОВАН! 🥳");
         // equipMimi('king-mode', "ТЕСТ: КОРОНА АКТИВИРОВАНА! 👑");
         // equipMimi('gentleman-mode', "ТЕСТ: ШЛЯПА АКТИВИРОВАНА");
