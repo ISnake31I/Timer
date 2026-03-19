@@ -300,29 +300,68 @@
     display: block;
 }
 
-/* ВЫТАЛАКИВАЕМ ШЛЯПУ ИЗ ГЛАЗ НА КРЫШУ КУБА */
+/* 1. РАЗРЕШАЕМ ГЛАЗАМ ВЫПУСКАТЬ ШЛЯПУ (ВАЖНО!) */
 .mimi-eyes {
-    overflow: visible !important; /* ЧТОБЫ ШЛЯПУ БЫЛО ВИДНО */
+    overflow: visible;
 }
 
+/* 2. ПРИНУДИТЕЛЬНО ВКЛЮЧАЕМ ШЛЯПУ, КОГДА АКТИВИРОВАН РЕЖИМ */
+.mimi-cube-container.engineer-mode .engineer-hat {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* 3. ФИКС ПОЗИЦИИ (ЧТОБЫ НЕ УЛЕТЕЛА) */
 .mimi-birthday-cap.engineer-hat {
-    position: absolute !important;
-    width: 80px !important;
-    height: 35px !important;
-    top: -65px !important; /* ЖЕСТКО ВЫНОСИМ НАВЕРХ */
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    background: linear-gradient(to bottom, #5d9948 45%, #795548 45%) !important;
-    border: 3px solid #3d2b24 !important;
+    position: absolute;
+    width: 40px;
+    height: 35px;
+    top: -55px; /* ВЫСОТА НАД КУБОМ */
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, #5d9948 45%, #795548 45%);
+    border: 3px solid #3d2b24;
     border-radius: 4px;
     z-index: 1000;
 }
 
+/* 4. КЛЮЧ */
+/* 1. РУКОЯТКА КЛЮЧА (Твой красный/коричневый цвет) */
 .mimi-birthday-cap.engineer-hat::after {
-    content: '🔧' !important;
+    content: '' !important;
     position: absolute;
-    right: -45px;
-    top: 15px;
-    font-size: 35px;
-    transform: rotate(45deg);
+    left: 45px; 
+    top: 35px;
+    width: 25px; 
+    height: 10px;
+    background: #850303 !important; /* Твой красный */
+    border: 2px solid #243447;
+    border-radius: 2px;
+    transform: rotate(-75deg);
+    z-index: 10;
+}
+
+/* 2. КВАДРАТНАЯ ГОЛОВКА (Brass / Латунь) */
+.mimi-birthday-cap.engineer-hat::before {
+    content: '' !important;
+    position: absolute;
+    left: 58px; 
+    top: 10px;
+    width: 22px;
+    height: 22px;
+    /* ДЕЛАЕМ КВАДРАТ БЕЗ ПРАВОЙ СТЕНКИ */
+    border: 7px solid #c2965c; 
+    border-right: none !important; /* Убираем правую стенку */
+    background: transparent;
+    /* КОРИЧНЕВАЯ ЛЕВАЯ ВСТАВКА (через внутреннюю тень или градиент) */
+    box-shadow: inset 5px 0 0 #5d3a1a; /* Коричневая полоска слева внутри */
+    transform: rotate(14deg);
+    z-index: 11;
+}
+
+/* 3. ДОПОЛНИТЕЛЬНЫЙ ДЕКОР (Пятка) */
+.mimi-cube-container.engineer-mode .engineer-hat::after {
+    border-left: 5px solid #cf4c00 !important; /* Твоя золотая пятка */
 }
