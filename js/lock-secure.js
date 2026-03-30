@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkSession();
 
     const checkPass = () => {
-        if (passInput.value.toLowerCase() === 'Ангелок') {
+        if (passInput.value.toLowerCase() === 'Angel123123') {
             localStorage.setItem('lastLoginTime', new Date().getTime());
             lockscreen.classList.add('unlocked');
             if (mainContent) mainContent.style.opacity = '1';
